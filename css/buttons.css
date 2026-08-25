@@ -1,0 +1,276 @@
+/* =========================================================
+   ESTILOS COMPLEMENTARES DOS BOTÕES E CONTROLES INTERATIVOS
+   Este arquivo é carregado depois do style.css e padroniza os
+   controles que antes pareciam links ou botões sem acabamento.
+   ========================================================= */
+
+/* Remove pequenas diferenças visuais entre navegadores sem apagar
+   os estilos específicos definidos para cada componente abaixo. */
+button {
+    -webkit-appearance: none;
+    appearance: none;
+    font-family: inherit;
+}
+
+/* Mantém transições consistentes nos principais elementos clicáveis. */
+.button,
+.catalog-filter,
+.product-link,
+.text-button,
+.solution-card a,
+.faq-item > button,
+.menu-toggle,
+.mobile-quote-bar {
+    transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+/* =========================================================
+   BOTÃO PRINCIPAL
+   Reforça a aparência do componente .button usado no cabeçalho,
+   hero, calculadora, formulário e CTA final.
+   ========================================================= */
+.button {
+    border: 1px solid var(--blue-700);
+    box-shadow: 0 8px 20px rgba(11, 87, 208, 0.14);
+}
+
+.button:hover {
+    border-color: var(--blue-800);
+}
+
+.button:active {
+    box-shadow: 0 5px 14px rgba(11, 87, 208, 0.14);
+    transform: translateY(0);
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    box-shadow: none;
+    transform: none;
+}
+
+/* =========================================================
+   BOTÕES DE TEXTO DA CALCULADORA
+   "Voltar" e "Refazer cálculo" deixam de parecer texto solto e
+   passam a ter uma aparência secundária clara e intencional.
+   ========================================================= */
+.text-button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #cbd9e8;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--blue-700);
+    padding: 0 18px;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.text-button:hover {
+    border-color: var(--blue-700);
+    background: var(--blue-100);
+    color: var(--blue-800);
+    box-shadow: 0 7px 18px rgba(17, 55, 102, 0.08);
+}
+
+.text-button:active {
+    transform: translateY(1px);
+}
+
+/* =========================================================
+   FILTROS DO CATÁLOGO
+   Agora cada filtro tem profundidade, feedback de clique e estado
+   ativo claramente diferente do estado neutro.
+   ========================================================= */
+.catalog-filter {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d5e0ec;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(17, 55, 102, 0.04);
+    line-height: 1.1;
+}
+
+.catalog-filter:hover {
+    border-color: #9ebce1;
+    background: #f4f8ff;
+    color: var(--blue-800);
+    box-shadow: 0 7px 18px rgba(17, 55, 102, 0.08);
+    transform: translateY(-1px);
+}
+
+.catalog-filter.active,
+.catalog-filter.active:hover {
+    border-color: var(--blue-700);
+    background: var(--blue-700);
+    color: #ffffff;
+    box-shadow: 0 9px 22px rgba(11, 87, 208, 0.20);
+}
+
+.catalog-filter:active {
+    transform: translateY(0);
+}
+
+/* =========================================================
+   BOTÃO "ORÇAR" DOS CARDS
+   Antes ele era propositalmente um texto azul. Agora é um botão
+   compacto, preservando o card limpo e deixando a ação evidente.
+   ========================================================= */
+.product-link {
+    display: inline-flex;
+    min-height: 38px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #c9dcf6;
+    border-radius: 999px;
+    background: var(--blue-100);
+    color: var(--blue-700);
+    padding: 0 14px;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.product-link:hover {
+    border-color: var(--blue-700);
+    background: var(--blue-700);
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(11, 87, 208, 0.18);
+    transform: translateY(-1px);
+}
+
+.product-link:active {
+    transform: translateY(0);
+}
+
+/* =========================================================
+   LINKS DE AÇÃO DOS CARDS DE SOLUÇÕES
+   Eles continuam sendo links de navegação, porém visualmente passam
+   a funcionar como CTAs secundários em vez de texto comum.
+   ========================================================= */
+.solution-card a {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #c9dcf6;
+    border-radius: 999px;
+    background: var(--blue-100);
+    padding: 0 15px;
+    line-height: 1.1;
+}
+
+.solution-card a:hover {
+    border-color: var(--blue-700);
+    background: var(--blue-700);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.solution-card-featured a {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.10);
+    color: #ffffff;
+}
+
+.solution-card-featured a:hover {
+    border-color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+}
+
+/* =========================================================
+   BOTÕES DO FAQ
+   O FAQ continua sendo um acordeão, mas cada linha ganha uma área
+   clicável visível, feedback no hover e destaque quando está aberta.
+   ========================================================= */
+.faq-item {
+    padding: 7px 0;
+}
+
+.faq-item > button {
+    min-height: 68px;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: transparent;
+    padding: 0 16px;
+}
+
+.faq-item > button:hover {
+    border-color: #d9e5f3;
+    background: #f7faff;
+}
+
+.faq-item.open > button {
+    border-color: #cbdff8;
+    background: var(--blue-100);
+    color: var(--blue-900);
+}
+
+.faq-item > button strong {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--blue-100);
+    color: var(--blue-700);
+}
+
+.faq-item.open > button strong {
+    background: var(--blue-700);
+    color: #ffffff;
+}
+
+.faq-answer {
+    padding-left: 16px;
+}
+
+/* =========================================================
+   ESTADOS DE FOCO PARA TECLADO
+   Garante que botões e links importantes continuem identificáveis
+   para quem navega sem mouse.
+   ========================================================= */
+.button:focus-visible,
+.catalog-filter:focus-visible,
+.product-link:focus-visible,
+.text-button:focus-visible,
+.solution-card a:focus-visible,
+.faq-item > button:focus-visible,
+.menu-toggle:focus-visible,
+.mobile-quote-bar:focus-visible {
+    outline: 3px solid rgba(91, 216, 239, 0.85);
+    outline-offset: 3px;
+}
+
+/* =========================================================
+   AJUSTES PARA CELULAR
+   Em telas pequenas, as ações da calculadora ficam com largura total
+   e o botão "Orçar" ganha uma área de toque mais confortável.
+   ========================================================= */
+@media (max-width: 680px) {
+    .product-link {
+        min-height: 42px;
+        padding-inline: 16px;
+    }
+
+    .text-button {
+        min-height: 48px;
+    }
+
+    .faq-item > button {
+        min-height: 64px;
+        padding-inline: 12px;
+    }
+}
