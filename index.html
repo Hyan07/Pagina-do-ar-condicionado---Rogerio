@@ -1,371 +1,460 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- =====================================================
-         SEO, COMPARTILHAMENTO E RESPONSIVIDADE
-         O projeto continua sem framework para permanecer simples
-         de hospedar, estudar e alterar na Hostinger/GitHub.
-         ===================================================== -->
+    <!-- Define a codificação, responsividade e informações básicas para mecanismos de busca. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#073f52">
-    <meta name="description" content="Locação de ar-condicionado para empresas, escritórios, lojas, eventos e necessidades temporárias. Calcule BTUs, compare equipamentos e prepare uma solicitação de orçamento.">
-    <meta property="og:title" content="Locação de Ar-Condicionado | Climatização sob medida">
-    <meta property="og:description" content="Calcule a capacidade, compare equipamentos reais de referência e simule uma locação mensal.">
-    <meta property="og:type" content="website">
+    <meta name="description" content="Locação de ar-condicionado para empresas, eventos e ambientes temporários. Calcule a capacidade indicada e solicite um orçamento.">
+    <meta name="theme-color" content="#0b57d0">
     <title>Locação de Ar-Condicionado | Climatização sob medida</title>
+
+    <!-- Arquivo principal de estilos do projeto. -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- =====================================================
-         FAIXA DE TRANSPARÊNCIA
-         Diferencia os benchmarks públicos da futura tabela própria
-         da empresa para não apresentar preço pesquisado como oferta.
-         ===================================================== -->
-    <div class="market-strip">
-        <div class="container market-strip__content">
-            <span><strong>Base pública pesquisada em 24/08/2026.</strong> Valores finais dependem de estoque, endereço, instalação e contrato.</span>
-            <a href="#referencias">Ver metodologia</a>
-        </div>
-    </div>
-
-    <!-- =====================================================
+    <!-- =========================================================
          CABEÇALHO
-         O nome é neutro porque a razão/marca comercial definitiva
-         ainda não foi fornecida. O JS permite trocar em um só lugar.
-         ===================================================== -->
+         Mantém a navegação curta e leva o usuário diretamente para
+         os principais pontos de conversão da página.
+         ========================================================= -->
     <header class="site-header" data-header>
         <div class="container header-content">
-            <a class="brand" href="#inicio" aria-label="Ir para o início">
-                <span class="brand__icon" aria-hidden="true">❄</span>
-                <span class="brand__text">
-                    <strong data-company-name>Locação de Ar-Condicionado</strong>
-                    <small>Climatização sob medida</small>
+            <!-- Marca provisória: será substituída quando o nome/logo oficial da empresa existir. -->
+            <a class="brand" href="#inicio" aria-label="Voltar ao início">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" role="img">
+                        <path d="M8 16h20c6 0 10-3 10-8" />
+                        <path d="M8 24h28c5 0 8 3 8 8s-3 8-8 8" />
+                        <path d="M8 32h14c5 0 8 3 8 8" />
+                    </svg>
+                </span>
+                <span class="brand-copy">
+                    <strong>Locação</strong>
+                    <small>Ar-condicionado</small>
                 </span>
             </a>
 
-            <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-navigation" data-menu-toggle>
+            <!-- Botão do menu móvel. -->
+            <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu-toggle>
                 <span></span><span></span><span></span>
             </button>
 
-            <nav class="main-navigation" id="main-navigation" data-navigation aria-label="Navegação principal">
+            <!-- Menu enxuto para evitar excesso de navegação. -->
+            <nav class="main-navigation" data-navigation>
                 <a href="#solucoes">Soluções</a>
-                <a href="#catalogo">Equipamentos</a>
+                <a href="#equipamentos">Equipamentos</a>
                 <a href="#calculadora">Calculadora</a>
-                <a href="#orcamento">Orçamento</a>
-                <a href="#faq">Dúvidas</a>
-                <a class="button button--small" href="#orcamento">Simular locação</a>
+                <a href="#duvidas">Dúvidas</a>
+                <a class="button button-small" href="#orcamento">Solicitar orçamento</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <!-- =================================================
+        <!-- =====================================================
              HERO
-             Imagem real de fabricante usada somente como referência
-             visual de categoria, não como declaração de estoque.
-             ================================================= -->
+             Inspirado na referência visual enviada: muito espaço,
+             azul forte, tipografia grande e produto como protagonista.
+             ===================================================== -->
         <section class="hero" id="inicio">
+            <div class="hero-decoration hero-decoration-one" aria-hidden="true"></div>
+            <div class="hero-decoration hero-decoration-two" aria-hidden="true"></div>
+
             <div class="container hero-grid">
                 <div class="hero-content">
-                    <span class="eyebrow">Climatização sem imobilizar capital na compra</span>
-                    <h1>Alugue o ar-condicionado certo para o seu espaço.</h1>
-                    <p class="hero-lead">Dimensione a necessidade, compare capacidades e tenha uma referência de locação antes do atendimento comercial.</p>
+                    <span class="eyebrow">Climatização sem complicação</span>
+                    <h1>Conforto térmico pelo tempo que você <span>realmente precisa.</span></h1>
+                    <p>
+                        Locação de ar-condicionado para empresas, eventos e necessidades temporárias.
+                        Descubra a capacidade indicada para o ambiente e solicite uma proposta em poucos passos.
+                    </p>
+
                     <div class="hero-actions">
-                        <a class="button" href="#calculadora">Calcular BTUs</a>
-                        <a class="button button--secondary" href="#catalogo">Ver equipamentos</a>
+                        <a class="button button-light" href="#calculadora">Calcular BTUs</a>
+                        <a class="button button-outline-light" href="#orcamento">Pedir orçamento</a>
                     </div>
-                    <div class="hero-metrics" aria-label="Destaques do serviço">
-                        <div><strong>Mensal</strong><span>Referência por equipamento</span></div>
-                        <div><strong>Flexível</strong><span>Quantidade e prazo ajustáveis</span></div>
-                        <div><strong>Assistido</strong><span>Validação técnica antes da instalação</span></div>
+
+                    <!-- Informações objetivas, sem números ou promessas inventadas. -->
+                    <div class="hero-points">
+                        <div><span class="point-icon">✓</span><span>Dimensionamento inicial</span></div>
+                        <div><span class="point-icon">✓</span><span>Período flexível</span></div>
+                        <div><span class="point-icon">✓</span><span>Validação técnica</span></div>
                     </div>
                 </div>
 
-                <figure class="hero-product">
-                    <span class="hero-product__badge">Produto real de referência</span>
-                    <img src="https://mideabr.vtexassets.com/arquivos/ids/165695-1440-auto/01.Ar-Condicionado-Midea-Inverter-Xtreme-Save-Connect-vC-Frontal.webp?quality=9&v=638229750749730000" alt="Conjunto de ar-condicionado split inverter Midea" fetchpriority="high">
-                    <figcaption>
-                        <div><strong>Split Inverter 12.000 BTU/h</strong><span>Categoria comum para salas, quartos e pequenos escritórios.</span></div>
-                        <a href="https://www.midea.com.br/ar-condicionado-split-inverter-12000-btu-xtremesave-frio-midea-2/p" target="_blank" rel="noopener noreferrer">Fonte oficial</a>
-                    </figcaption>
-                </figure>
+                <!-- Foto oficial de equipamento real usada como referência visual de produto. -->
+                <div class="hero-product" aria-label="Ar-condicionado split em destaque">
+                    <span class="hero-product-label">Split Inverter</span>
+                    <div class="hero-product-glow" aria-hidden="true"></div>
+                    <img
+                        src="https://mideabr.vtexassets.com/arquivos/ids/171236-1440-auto/Packshot.jpg.webp?quality=9&v=638754832343170000"
+                        alt="Ar-condicionado Split Midea em fotografia oficial de produto"
+                        loading="eager"
+                    >
+                    <div class="hero-card hero-card-top">
+                        <small>Capacidade</small>
+                        <strong>9.000 a 60.000</strong>
+                        <span>BTU/h</span>
+                    </div>
+                    <div class="hero-card hero-card-bottom">
+                        <span class="snowflake" aria-hidden="true">❄</span>
+                        <div><strong>Escolha orientada</strong><small>Calcule antes de solicitar</small></div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- =================================================
-             JORNADA RESUMIDA DA LOCAÇÃO
-             Baseada em práticas recorrentes observadas em locadoras.
-             Cada item continua sujeito ao escopo contratual real.
-             ================================================= -->
-        <section class="service-ribbon" aria-label="Etapas da locação">
-            <div class="container service-ribbon__grid">
-                <div><span>01</span><strong>Dimensionamento</strong><small>BTUs e condições do local</small></div>
-                <div><span>02</span><strong>Instalação</strong><small>Escopo padrão validado</small></div>
-                <div><span>03</span><strong>Manutenção</strong><small>Conforme contrato</small></div>
-                <div><span>04</span><strong>Retirada</strong><small>Programada ao final</small></div>
-            </div>
-        </section>
-
-        <!-- =================================================
-             SOLUÇÕES POR CENÁRIO
-             ================================================= -->
+        <!-- =====================================================
+             SOLUÇÕES
+             Mostra aplicações típicas da locação sem afirmar histórico,
+             clientes ou estrutura que ainda não foram informados.
+             ===================================================== -->
         <section class="section" id="solucoes">
             <div class="container">
-                <div class="section-heading section-heading--split">
-                    <div><span class="eyebrow">Soluções</span><h2>Um formato para cada necessidade.</h2></div>
-                    <p>Locação recorrente, múltiplos ambientes e eventos têm estruturas de custo diferentes. O site automatiza o que pode ser comparado e envia cenários especiais para análise.</p>
+                <div class="section-heading section-heading-split">
+                    <div>
+                        <span class="eyebrow eyebrow-blue">Onde a locação faz sentido</span>
+                        <h2>Uma solução prática para diferentes necessidades.</h2>
+                    </div>
+                    <p>
+                        A capacidade e a configuração são definidas conforme o ambiente,
+                        a duração da locação e as condições reais de instalação.
+                    </p>
                 </div>
 
-                <div class="solution-grid">
-                    <article class="solution-card solution-card--featured">
-                        <span class="solution-card__tag">Mais previsível</span>
-                        <h3>Locação mensal</h3>
-                        <p>Para residência, sala, loja ou escritório que precisa climatizar continuamente sem comprar o equipamento.</p>
-                        <ul><li>Mensalidade por capacidade</li><li>Prazo configurável</li><li>Manutenção definida em contrato</li><li>Substituição por falha, quando contratada</li></ul>
-                        <a href="#orcamento">Simular mensalidade →</a>
+                <div class="solutions-grid">
+                    <article class="solution-card solution-card-featured">
+                        <span class="solution-number">01</span>
+                        <div class="solution-icon" aria-hidden="true">▦</div>
+                        <h3>Empresas e escritórios</h3>
+                        <p>Climatização temporária, expansão de operação, substituição provisória ou demandas específicas.</p>
+                        <a href="#calculadora">Calcular capacidade →</a>
                     </article>
+
                     <article class="solution-card">
-                        <span class="solution-card__tag">Empresas</span>
-                        <h3>Projeto corporativo</h3>
-                        <p>Para vários ambientes, filiais, operações temporárias, obras e espaços comerciais maiores.</p>
-                        <ul><li>Levantamento por ambiente</li><li>Combinação de capacidades</li><li>Cronograma de instalação</li><li>Manutenção centralizada</li></ul>
-                        <a href="#orcamento">Preparar solicitação →</a>
+                        <span class="solution-number">02</span>
+                        <div class="solution-icon" aria-hidden="true">◇</div>
+                        <h3>Eventos e espaços temporários</h3>
+                        <p>Configurações adaptadas ao tempo de uso, circulação de pessoas e características do local.</p>
+                        <a href="#orcamento">Solicitar avaliação →</a>
                     </article>
+
                     <article class="solution-card">
-                        <span class="solution-card__tag">Curto prazo</span>
-                        <h3>Eventos e contingência</h3>
-                        <p>O cálculo depende de duração, lotação, energia disponível, montagem, acessos e logística.</p>
-                        <ul><li>Análise de carga térmica</li><li>Equipamentos temporários</li><li>Logística de montagem</li><li>Valor sob avaliação</li></ul>
-                        <a href="#orcamento" data-set-quote-mode="evento">Solicitar análise →</a>
+                        <span class="solution-number">03</span>
+                        <div class="solution-icon" aria-hidden="true">⌂</div>
+                        <h3>Ambientes residenciais</h3>
+                        <p>Alternativa para quem precisa climatizar um espaço por um período sem realizar a compra do equipamento.</p>
+                        <a href="#equipamentos">Ver equipamentos →</a>
                     </article>
                 </div>
             </div>
         </section>
 
-        <!-- =================================================
-             CATÁLOGO DINÂMICO
-             O JavaScript monta os cards a partir de js/data.js.
-             Isso evita duplicar produtos no HTML e facilita estoque.
-             ================================================= -->
-        <section class="section section--soft" id="catalogo">
+        <!-- =====================================================
+             CATÁLOGO
+             Os cards são preenchidos pelo JavaScript. Usamos fotos
+             oficiais reais de produtos como referência visual.
+             ===================================================== -->
+        <section class="section equipment-section" id="equipamentos">
             <div class="container">
-                <div class="section-heading section-heading--split">
-                    <div><span class="eyebrow">Equipamentos</span><h2>Capacidades usadas no mercado residencial e comercial.</h2></div>
-                    <p>As marcas e fotos são referências reais de fabricantes. A empresa deve substituir a lista pelo estoque efetivamente disponível antes de prometer um modelo específico.</p>
+                <div class="section-heading section-heading-center">
+                    <span class="eyebrow eyebrow-blue">Equipamentos</span>
+                    <h2>Opções para diferentes tamanhos de ambiente.</h2>
+                    <p>As imagens representam modelos reais disponíveis no mercado. O equipamento final depende do estoque e da avaliação comercial.</p>
                 </div>
 
-                <div class="catalog-toolbar" aria-label="Filtros do catálogo">
-                    <button class="filter-chip active" type="button" data-filter="todos">Todos</button>
-                    <button class="filter-chip" type="button" data-filter="split">Split</button>
-                    <button class="filter-chip" type="button" data-filter="portatil">Portátil</button>
-                    <button class="filter-chip" type="button" data-filter="piso-teto">Piso-teto</button>
-                    <button class="filter-chip" type="button" data-filter="cassete">Cassete</button>
+                <!-- Filtros simples para o usuário encontrar rapidamente o tipo desejado. -->
+                <div class="catalog-filters" aria-label="Filtrar equipamentos">
+                    <button class="catalog-filter active" type="button" data-filter="todos">Todos</button>
+                    <button class="catalog-filter" type="button" data-filter="split">Split</button>
+                    <button class="catalog-filter" type="button" data-filter="portatil">Portátil</button>
+                    <button class="catalog-filter" type="button" data-filter="comercial">Comercial</button>
                 </div>
+
+                <!-- Contêiner preenchido dinamicamente pelo script.js. -->
                 <div class="catalog-grid" data-catalog></div>
             </div>
         </section>
 
-        <!-- =================================================
-             CALCULADORA COMERCIAL DE BTU/H
-             É uma triagem e não substitui cálculo térmico normativo.
-             ================================================= -->
+        <!-- =====================================================
+             CALCULADORA EM ETAPAS
+             O formato de assistente reduz o volume visual do formulário
+             e deixa a experiência muito mais simples em telas móveis.
+             ===================================================== -->
         <section class="section calculator-section" id="calculadora">
-            <div class="container calculator-grid">
-                <div class="calculator-intro">
-                    <span class="eyebrow eyebrow--light">Dimensionamento inicial</span>
-                    <h2>Comece pelo ambiente, não pelo aparelho.</h2>
-                    <p>Área, pé-direito, pessoas, eletrônicos, aberturas e incidência solar entram na estimativa. Projetos complexos precisam de validação técnica.</p>
-                    <div class="calculator-points">
-                        <div><span>1</span><p>Informe as características principais.</p></div>
-                        <div><span>2</span><p>Receba a carga térmica aproximada.</p></div>
-                        <div><span>3</span><p>Leve a sugestão para o orçamento.</p></div>
+            <div class="container calculator-shell">
+                <div class="calculator-copy">
+                    <span class="eyebrow eyebrow-light">Calculadora de capacidade</span>
+                    <h2>Descubra qual configuração pode atender seu ambiente.</h2>
+                    <p>
+                        Responda algumas perguntas rápidas. O cálculo é uma estimativa inicial
+                        e deve ser confirmado antes da instalação.
+                    </p>
+
+                    <div class="calculator-benefits">
+                        <div><span>01</span><p>Informe tamanho e uso do ambiente.</p></div>
+                        <div><span>02</span><p>Adicione pessoas, eletrônicos e exposição solar.</p></div>
+                        <div><span>03</span><p>Receba uma indicação de capacidade e equipamento.</p></div>
                     </div>
                 </div>
 
                 <div class="calculator-card">
-                    <form class="calculator-form" data-calculator-form>
-                        <div class="form-group form-group--full">
-                            <label for="tipoAmbiente">Tipo de ambiente</label>
-                            <select id="tipoAmbiente" name="tipoAmbiente" required><option>Residencial</option><option>Escritório</option><option>Loja / comércio</option><option>Evento</option><option>Outro</option></select>
+                    <!-- Indicador visual das etapas atuais. -->
+                    <div class="step-indicator" aria-label="Progresso da calculadora">
+                        <span class="step-dot active" data-step-dot="1">1</span>
+                        <span class="step-line"></span>
+                        <span class="step-dot" data-step-dot="2">2</span>
+                        <span class="step-line"></span>
+                        <span class="step-dot" data-step-dot="3">3</span>
+                    </div>
+
+                    <form data-calculator-form>
+                        <!-- ETAPA 1: dimensões e tipo de ambiente. -->
+                        <div class="calculator-step active" data-calculator-step="1">
+                            <span class="step-label">Etapa 1 de 2</span>
+                            <h3>Como é o ambiente?</h3>
+
+                            <div class="form-group">
+                                <label for="tipoAmbiente">Tipo de ambiente</label>
+                                <select id="tipoAmbiente" name="tipoAmbiente" required>
+                                    <option value="Residencial">Residencial</option>
+                                    <option value="Escritório">Escritório</option>
+                                    <option value="Loja / comércio">Loja / comércio</option>
+                                    <option value="Evento">Evento</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group"><label for="largura">Largura (m)</label><input id="largura" name="largura" type="number" min="0.5" step="0.1" placeholder="Ex.: 5" required></div>
+                                <div class="form-group"><label for="comprimento">Comprimento (m)</label><input id="comprimento" name="comprimento" type="number" min="0.5" step="0.1" placeholder="Ex.: 6" required></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="peDireito">Pé-direito aproximado (m)</label>
+                                <input id="peDireito" name="peDireito" type="number" min="2" max="8" step="0.1" value="2.7" required>
+                                <small>Altura do piso até o teto.</small>
+                            </div>
+
+                            <button class="button button-full" type="button" data-next-step>Continuar</button>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group"><label for="largura">Largura (m)</label><input id="largura" name="largura" type="number" min="0.5" step="0.1" placeholder="Ex.: 5" required></div>
-                            <div class="form-group"><label for="comprimento">Comprimento (m)</label><input id="comprimento" name="comprimento" type="number" min="0.5" step="0.1" placeholder="Ex.: 6" required></div>
+
+                        <!-- ETAPA 2: fontes adicionais de carga térmica. -->
+                        <div class="calculator-step" data-calculator-step="2" hidden>
+                            <span class="step-label">Etapa 2 de 2</span>
+                            <h3>O que aumenta o calor no local?</h3>
+
+                            <div class="form-row">
+                                <div class="form-group"><label for="pessoas">Pessoas no ambiente</label><input id="pessoas" name="pessoas" type="number" min="1" max="200" step="1" value="1" required></div>
+                                <div class="form-group"><label for="eletronicos">Eletrônicos relevantes</label><input id="eletronicos" name="eletronicos" type="number" min="0" max="100" step="1" value="0" required></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="aberturas">Portas/janelas grandes</label>
+                                <select id="aberturas" name="aberturas">
+                                    <option value="0">Poucas / pequenas</option>
+                                    <option value="1">Quantidade moderada</option>
+                                    <option value="2">Muitas / grandes vitrines</option>
+                                </select>
+                            </div>
+
+                            <fieldset class="form-group radio-group">
+                                <legend>Incidência de sol</legend>
+                                <label class="radio-card"><input type="radio" name="sol" value="baixo"><span><strong>Baixa</strong><small>Sombra na maior parte do dia</small></span></label>
+                                <label class="radio-card"><input type="radio" name="sol" value="normal" checked><span><strong>Normal</strong><small>Condição intermediária</small></span></label>
+                                <label class="radio-card"><input type="radio" name="sol" value="forte"><span><strong>Forte</strong><small>Sol direto por várias horas</small></span></label>
+                            </fieldset>
+
+                            <div class="step-actions">
+                                <button class="text-button" type="button" data-prev-step>Voltar</button>
+                                <button class="button" type="submit">Ver recomendação</button>
+                            </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group"><label for="peDireito">Pé-direito (m)</label><input id="peDireito" name="peDireito" type="number" min="2" step="0.1" value="2.7" required></div>
-                            <div class="form-group"><label for="pessoas">Pessoas</label><input id="pessoas" name="pessoas" type="number" min="1" step="1" value="1" required></div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group"><label for="eletronicos">Eletrônicos relevantes</label><input id="eletronicos" name="eletronicos" type="number" min="0" step="1" value="0" required></div>
-                            <div class="form-group"><label for="aberturas">Portas/janelas grandes</label><input id="aberturas" name="aberturas" type="number" min="0" step="1" value="0" required></div>
-                        </div>
-                        <fieldset class="form-group form-group--full radio-group">
-                            <legend>Incidência de sol</legend>
-                            <label><input type="radio" name="sol" value="normal" checked><span><strong>Normal / sombra</strong><small>Pouca incidência direta</small></span></label>
-                            <label><input type="radio" name="sol" value="forte"><span><strong>Sol forte</strong><small>Incidência direta por várias horas</small></span></label>
-                        </fieldset>
-                        <button class="button button--full" type="submit">Calcular recomendação</button>
                     </form>
 
-                    <div class="calculator-result" data-calculator-result hidden>
-                        <span class="result-label">Recomendação estimada</span>
-                        <div class="result-main"><strong data-result-recommendation>--</strong><span>BTU/h</span></div>
-                        <div class="result-grid"><div><span>Área</span><strong data-result-area>--</strong></div><div><span>Carga estimada</span><strong data-result-load>--</strong></div><div><span>Quantidade</span><strong data-result-units>--</strong></div></div>
-                        <p data-result-solution></p>
-                        <button class="button button--full" type="button" data-send-to-quote>Levar para o orçamento</button>
-                        <button class="text-button" type="button" data-recalculate>Alterar dados</button>
+                    <!-- ETAPA 3: resultado visual com produto recomendado. -->
+                    <div class="calculator-step result-step" data-calculator-step="3" hidden>
+                        <span class="step-label">Recomendação inicial</span>
+                        <div class="result-layout">
+                            <div class="result-product"><img data-result-image src="" alt="Equipamento recomendado"></div>
+                            <div>
+                                <span class="result-kicker">Capacidade sugerida</span>
+                                <div class="result-btu"><strong data-result-btu>--</strong><span>BTU/h</span></div>
+                                <h3 data-result-title>--</h3>
+                                <p data-result-description>--</p>
+                            </div>
+                        </div>
+
+                        <div class="result-meta">
+                            <div><span>Área</span><strong data-result-area>--</strong></div>
+                            <div><span>Carga estimada</span><strong data-result-load>--</strong></div>
+                            <div><span>Quantidade</span><strong data-result-quantity>--</strong></div>
+                        </div>
+
+                        <p class="result-disclaimer">Estimativa para orientação comercial. A configuração definitiva depende das condições reais do ambiente e da instalação.</p>
+
+                        <div class="result-actions">
+                            <button class="button" type="button" data-send-to-quote>Levar para orçamento</button>
+                            <button class="text-button" type="button" data-recalculate>Refazer cálculo</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- =================================================
-             ESCOPO DE INSTALAÇÃO E LOCAÇÃO
-             Evita uma das maiores fontes de conflito comercial:
-             o cliente imaginar que qualquer obra está inclusa.
-             ================================================= -->
-        <section class="section" id="escopo">
+        <!-- =====================================================
+             COMO FUNCIONA
+             Resume o serviço em quatro passos objetivos.
+             ===================================================== -->
+        <section class="section process-section">
             <div class="container">
-                <div class="section-heading section-heading--split">
-                    <div><span class="eyebrow">Escopo transparente</span><h2>O contrato precisa dizer exatamente o que está incluído.</h2></div>
-                    <p>Locadoras pesquisadas frequentemente incluem instalação, manutenção e retirada. Já uma instalação padrão costuma ter limites de tubulação, acesso e infraestrutura.</p>
+                <div class="section-heading section-heading-center">
+                    <span class="eyebrow eyebrow-blue">Como funciona</span>
+                    <h2>Do ambiente climatizado ao fim da locação.</h2>
                 </div>
-                <div class="scope-grid">
-                    <article class="scope-card"><span>✓</span><h3>Visita e dimensionamento</h3><p>Confirma capacidade, posição dos equipamentos, alimentação elétrica e acesso.</p></article>
-                    <article class="scope-card"><span>✓</span><h3>Instalação padrão</h3><p>Interligação, suporte, dreno e testes dentro dos limites definidos em proposta.</p></article>
-                    <article class="scope-card"><span>✓</span><h3>Manutenção</h3><p>Preventiva e corretiva podem integrar a mensalidade conforme o contrato.</p></article>
-                    <article class="scope-card"><span>✓</span><h3>Retirada</h3><p>Desinstalação e recolhimento podem ser programados ao término da locação.</p></article>
+
+                <div class="process-grid">
+                    <article><span>01</span><h3>Entendemos a necessidade</h3><p>Ambiente, período, quantidade de pessoas e características do local.</p></article>
+                    <article><span>02</span><h3>Definimos a solução</h3><p>Capacidade e tipo de equipamento são ajustados à demanda informada.</p></article>
+                    <article><span>03</span><h3>Confirmamos o orçamento</h3><p>Prazo, logística, instalação e retirada são alinhados na proposta.</p></article>
+                    <article><span>04</span><h3>Instalação e retirada</h3><p>Execução conforme o escopo aprovado e condições técnicas do local.</p></article>
                 </div>
-                <div class="scope-warning"><strong>Normalmente exigem avaliação adicional:</strong><span>obra civil, pintura/gesso, adequação elétrica, trabalho em altura, andaime/rapel, tubulação extra e condições de acesso fora do padrão.</span></div>
             </div>
         </section>
 
-        <!-- =================================================
+        <!-- =====================================================
              ORÇAMENTO
-             Calcula somente referências mensais comparáveis. Eventos,
-             instalação e logística ficam sob confirmação para evitar
-             criar uma taxa falsa sem política comercial da empresa.
-             ================================================= -->
+             O formulário não inventa preços. Ele gera uma solicitação
+             completa e, quando o WhatsApp oficial for informado no JS,
+             abre a conversa já preenchida.
+             ===================================================== -->
         <section class="section quote-section" id="orcamento">
-            <div class="container">
-                <div class="section-heading section-heading--split section-heading--light">
-                    <div><span class="eyebrow eyebrow--light">Orçamento</span><h2>Prepare uma solicitação completa em poucos minutos.</h2></div>
-                    <p>O valor exibido é referência de mercado. A proposta final só existe após confirmação de estoque, local, instalação, logística, impostos e contrato.</p>
-                </div>
+            <div class="container quote-grid">
+                <div class="quote-content">
+                    <span class="eyebrow eyebrow-light">Solicite uma proposta</span>
+                    <h2>Conte onde e por quanto tempo você precisa climatizar.</h2>
+                    <p>Preencha os dados principais. Se você veio da calculadora, a recomendação será adicionada automaticamente.</p>
 
-                <div class="quote-workspace">
-                    <form class="quote-form" data-quote-form>
-                        <div class="form-row">
-                            <div class="form-group"><label for="nome">Nome</label><input id="nome" name="nome" type="text" autocomplete="name" required></div>
-                            <div class="form-group"><label for="telefone">WhatsApp</label><input id="telefone" name="telefone" type="tel" autocomplete="tel" placeholder="(00) 00000-0000" required></div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group"><label for="email">E-mail</label><input id="email" name="email" type="email" autocomplete="email"></div>
-                            <div class="form-group"><label for="cidade">Cidade</label><input id="cidade" name="cidade" type="text" required></div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group"><label for="modalidade">Modalidade</label><select id="modalidade" name="modalidade" data-quote-mode><option value="mensal">Locação mensal</option><option value="corporativa">Projeto corporativo</option><option value="evento">Evento / curto prazo</option></select></div>
-                            <div class="form-group"><label for="tipoUso">Uso</label><select id="tipoUso" name="tipoUso" data-quote-environment><option value="">Selecione</option><option>Residencial</option><option>Escritório</option><option>Loja / comércio</option><option>Evento</option><option>Outro</option></select></div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group form-group--grow"><label for="equipamentoOrcamento">Equipamento</label><select id="equipamentoOrcamento" name="equipamento" data-quote-equipment required></select></div>
-                            <div class="form-group form-group--small"><label for="quantidade">Qtd.</label><input id="quantidade" name="quantidade" type="number" min="1" max="20" value="1" required></div>
-                        </div>
-                        <div class="form-row" data-monthly-fields>
-                            <div class="form-group"><label for="meses">Prazo (meses)</label><input id="meses" name="meses" type="number" min="1" max="60" value="12" required></div>
-                            <div class="form-group"><label for="tensao">Tensão disponível</label><select id="tensao" name="tensao"><option value="Não informado">Não sei</option><option>127V</option><option>220V</option><option>Trifásico / avaliar</option></select></div>
-                        </div>
-                        <div class="form-group form-group--full"><label for="resumoCalculo">Resumo técnico</label><textarea id="resumoCalculo" name="resumoCalculo" rows="4" data-quote-summary placeholder="Use a calculadora para preencher automaticamente."></textarea></div>
-                        <div class="form-group form-group--full"><label for="observacoes">Detalhes do local</label><textarea id="observacoes" name="observacoes" rows="4" placeholder="Andar, acesso, parede disponível, urgência, data do evento, etc."></textarea></div>
-                        <label class="consent-line"><input type="checkbox" name="consentimento" required><span>Autorizo o uso destes dados para retorno sobre esta solicitação.</span></label>
-                        <button class="button button--full" type="submit">Gerar solicitação de orçamento</button>
-                        <p class="form-feedback" data-form-feedback aria-live="polite"></p>
-                    </form>
-
-                    <aside class="quote-summary" aria-label="Resumo da simulação">
-                        <div class="quote-summary__head"><span>Estimativa de referência</span><strong data-quote-status>Mensal</strong></div>
-                        <div class="quote-summary__price"><span>Mensalidade estimada</span><strong data-quote-monthly>R$ --</strong><small data-quote-price-note>Selecione um equipamento.</small></div>
-                        <div class="quote-summary__lines"><div><span>Equipamento</span><strong data-quote-product>--</strong></div><div><span>Quantidade</span><strong data-quote-quantity>1</strong></div><div><span>Prazo</span><strong data-quote-period>12 meses</strong></div><div><span>Período</span><strong data-quote-total>R$ --</strong></div></div>
-                        <div class="quote-summary__included"><strong>A confirmar no contrato</strong><span>Instalação • manutenção • suporte • retirada • deslocamento</span></div>
-                    </aside>
-                </div>
-            </div>
-        </section>
-
-        <!-- =================================================
-             REFERÊNCIAS PÚBLICAS
-             A tabela é montada em JS e deixa a metodologia auditável.
-             ================================================= -->
-        <section class="section" id="referencias">
-            <div class="container">
-                <div class="section-heading section-heading--split"><div><span class="eyebrow">Base de mercado</span><h2>De onde vêm os números do simulador?</h2></div><p>Em vez de inventar valores, usamos referências públicas de locação e contratação. A futura tabela interna deve substituir esses benchmarks.</p></div>
-                <div class="benchmark-card">
-                    <div class="benchmark-table-wrap"><table class="benchmark-table"><thead><tr><th>Categoria</th><th>Capacidade</th><th>Referência pública</th><th>Observação</th></tr></thead><tbody data-benchmark-table></tbody></table></div>
-                    <div class="benchmark-sources">
-                        <strong>Fontes principais</strong>
-                        <a href="https://app.locaar.com.br/" target="_blank" rel="noopener noreferrer">Locaar — preços públicos</a>
-                        <a href="https://www.ctdigital.net.br/locaar.html" target="_blank" rel="noopener noreferrer">Locaar / CT Digital — planos e serviço</a>
-                        <a href="https://www.al.rn.leg.br/storage/licitacao/2024/rhq6huizzgtbk3ae0wldd9g5f2saus.pdf" target="_blank" rel="noopener noreferrer">ALRN — referência contratual mensal</a>
-                        <a href="https://www.aluguetudo.com/" target="_blank" rel="noopener noreferrer">Alugue Tudo — escopo de locação</a>
-                        <a href="https://casadoconstrutor.com.br/pt-br/blog/como-funciona-locacao-equipamentos" target="_blank" rel="noopener noreferrer">Casa do Construtor — fluxo de locação</a>
-                        <a href="https://content.electrolux.com.br/brasil/electrolux/servicos/instalacao/instalacao_ar_condicionado_12000/index.html" target="_blank" rel="noopener noreferrer">Electrolux — instalação padrão</a>
+                    <div class="quote-feature-list">
+                        <div><span>✓</span><p>Equipamento e capacidade sugerida</p></div>
+                        <div><span>✓</span><p>Quantidade e período de locação</p></div>
+                        <div><span>✓</span><p>Dados do ambiente e observações</p></div>
                     </div>
                 </div>
+
+                <form class="quote-form" data-quote-form>
+                    <div class="form-row">
+                        <div class="form-group"><label for="nome">Nome</label><input id="nome" name="nome" type="text" placeholder="Seu nome" required></div>
+                        <div class="form-group"><label for="telefone">WhatsApp</label><input id="telefone" name="telefone" type="tel" placeholder="(00) 00000-0000" required></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label for="cidade">Cidade</label><input id="cidade" name="cidade" type="text" placeholder="Cidade da instalação" required></div>
+                        <div class="form-group">
+                            <label for="tipoUso">Tipo de uso</label>
+                            <select id="tipoUso" name="tipoUso">
+                                <option value="">Selecione</option>
+                                <option value="Residencial">Residencial</option>
+                                <option value="Escritório">Escritório</option>
+                                <option value="Loja / comércio">Loja / comércio</option>
+                                <option value="Evento">Evento</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group form-group-grow"><label for="equipamentoOrcamento">Equipamento / capacidade</label><select id="equipamentoOrcamento" name="equipamento" data-quote-equipment required></select></div>
+                        <div class="form-group form-group-small"><label for="quantidade">Quantidade</label><input id="quantidade" name="quantidade" type="number" min="1" max="20" value="1" required></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label for="inicioLocacao">Início desejado</label><input id="inicioLocacao" name="inicioLocacao" type="date"></div>
+                        <div class="form-group">
+                            <label for="periodo">Período aproximado</label>
+                            <select id="periodo" name="periodo">
+                                <option value="1 a 3 dias">1 a 3 dias</option>
+                                <option value="4 a 7 dias">4 a 7 dias</option>
+                                <option value="8 a 15 dias">8 a 15 dias</option>
+                                <option value="16 a 30 dias" selected>16 a 30 dias</option>
+                                <option value="Mais de 30 dias">Mais de 30 dias</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group"><label for="resumoCalculo">Resumo técnico</label><textarea id="resumoCalculo" name="resumoCalculo" rows="4" data-quote-summary placeholder="Se você usar a calculadora, a recomendação aparecerá aqui automaticamente."></textarea></div>
+                    <div class="form-group"><label for="observacoes">Observações</label><textarea id="observacoes" name="observacoes" rows="4" placeholder="Ex.: acesso ao local, horário, evento, instalação temporária, etc."></textarea></div>
+
+                    <label class="consent-line"><input type="checkbox" required><span>Concordo em enviar estes dados para atendimento e elaboração do orçamento.</span></label>
+
+                    <button class="button button-full" type="submit">Gerar solicitação de orçamento</button>
+                    <p class="form-feedback" data-form-feedback aria-live="polite"></p>
+                </form>
             </div>
         </section>
 
-        <!-- =================================================
-             PROCESSO DE ATENDIMENTO
-             ================================================= -->
-        <section class="section section--soft" id="processo">
-            <div class="container">
-                <div class="section-heading section-heading--center"><span class="eyebrow">Como funciona</span><h2>Do primeiro cálculo até a retirada.</h2></div>
-                <div class="process-grid"><article><span>01</span><h3>Informe o ambiente</h3><p>Medidas, cidade, uso, prazo e infraestrutura.</p></article><article><span>02</span><h3>Dimensione</h3><p>A calculadora faz a triagem e a equipe valida.</p></article><article><span>03</span><h3>Feche o escopo</h3><p>Contrato define preço, instalação e manutenção.</p></article><article><span>04</span><h3>Instale e utilize</h3><p>Equipamentos entram em operação com suporte contratado.</p></article><article><span>05</span><h3>Renove ou retire</h3><p>Ao final, programe renovação, troca ou retirada.</p></article></div>
-            </div>
-        </section>
-
-        <!-- =================================================
+        <!-- =====================================================
              FAQ
-             ================================================= -->
-        <section class="section" id="faq">
-            <div class="container faq-layout">
-                <div class="section-heading"><span class="eyebrow">Perguntas frequentes</span><h2>O que precisa estar claro antes de fechar.</h2><p>As respostas são orientativas; condições definitivas pertencem ao contrato da empresa.</p></div>
+             Perguntas curtas e comerciais, escondidas em acordeões.
+             ===================================================== -->
+        <section class="section faq-section" id="duvidas">
+            <div class="container faq-grid">
+                <div class="section-heading">
+                    <span class="eyebrow eyebrow-blue">Dúvidas frequentes</span>
+                    <h2>O que você precisa saber antes de solicitar.</h2>
+                    <p>O orçamento final sempre considera disponibilidade, instalação, logística e características reais do ambiente.</p>
+                </div>
+
                 <div class="faq-list">
-                    <details open><summary>Como saber quantos BTUs preciso?</summary><p>A calculadora fornece uma estimativa inicial. Sol, pé-direito, pessoas, eletrônicos, aberturas e características construtivas influenciam a carga; ambientes complexos precisam de avaliação técnica.</p></details>
-                    <details><summary>O valor mostrado já é o preço final?</summary><p>Não. É um benchmark mensal público. O preço final depende de estoque, local, prazo, instalação, acesso, infraestrutura, impostos e política comercial.</p></details>
-                    <details><summary>Instalação e manutenção podem estar incluídas?</summary><p>Sim. Isso é comum em locação, mas o contrato precisa definir limites de tubulação, infraestrutura, acesso, trabalho em altura, peças e atendimento.</p></details>
-                    <details><summary>Posso alugar mais de um equipamento?</summary><p>Sim. A calculadora pode sugerir múltiplas unidades e projetos corporativos podem combinar capacidades diferentes.</p></details>
-                    <details><summary>Eventos têm preço automático?</summary><p>Não nesta versão. Lotação, data, energia, logística e montagem mudam muito o custo, então o sistema envia o caso para avaliação.</p></details>
-                    <details><summary>A marca da foto será a marca locada?</summary><p>Não necessariamente. As fotos mostram produtos reais de referência. O modelo entregue depende do estoque e precisa ser confirmado na proposta.</p></details>
-                    <details><summary>O que costuma ficar fora da instalação padrão?</summary><p>Obra civil, pintura/gesso, adequações elétricas, trabalho em altura, andaime/rapel e tubulação extra normalmente exigem orçamento adicional.</p></details>
+                    <article class="faq-item">
+                        <button type="button" aria-expanded="false"><span>Como saber quantos BTUs eu preciso?</span><strong>+</strong></button>
+                        <div class="faq-answer"><p>A calculadora gera uma estimativa inicial usando área, pessoas, eletrônicos, pé-direito e incidência solar. A indicação pode ser ajustada após análise técnica.</p></div>
+                    </article>
+                    <article class="faq-item">
+                        <button type="button" aria-expanded="false"><span>A instalação está incluída na locação?</span><strong>+</strong></button>
+                        <div class="faq-answer"><p>O escopo de instalação e retirada deve ser definido no orçamento, porque distância, infraestrutura, altura, elétrica e tubulação podem variar de um local para outro.</p></div>
+                    </article>
+                    <article class="faq-item">
+                        <button type="button" aria-expanded="false"><span>Posso alugar por poucos dias?</span><strong>+</strong></button>
+                        <div class="faq-answer"><p>O período é informado na solicitação. A disponibilidade e as condições comerciais são confirmadas conforme o equipamento e a logística necessária.</p></div>
+                    </article>
+                    <article class="faq-item">
+                        <button type="button" aria-expanded="false"><span>Vocês atendem eventos?</span><strong>+</strong></button>
+                        <div class="faq-answer"><p>O site já permite solicitar orçamento para eventos. Como esse tipo de projeto depende de lotação, energia, montagem e duração, a configuração precisa ser validada antes da proposta final.</p></div>
+                    </article>
+                    <article class="faq-item">
+                        <button type="button" aria-expanded="false"><span>O equipamento mostrado no site é exatamente o que será entregue?</span><strong>+</strong></button>
+                        <div class="faq-answer"><p>As fotos apresentam modelos reais de referência. Marca e modelo efetivamente disponíveis devem ser confirmados no momento do orçamento.</p></div>
+                    </article>
                 </div>
             </div>
         </section>
 
-        <section class="final-cta"><div class="container final-cta__content"><div><span class="eyebrow eyebrow--light">Pronto para dimensionar?</span><h2>Comece pela necessidade do ambiente.</h2></div><a class="button button--light" href="#calculadora">Calcular agora</a></div></section>
+        <!-- CTA final simples para reforçar a ação principal. -->
+        <section class="final-cta">
+            <div class="container final-cta-content">
+                <div><span>Precisa climatizar um ambiente?</span><h2>Comece pelo dimensionamento.</h2></div>
+                <a class="button button-light" href="#calculadora">Calcular agora</a>
+            </div>
+        </section>
     </main>
 
-    <!-- =====================================================
-         RODAPÉ
-         Não inventamos CNPJ, endereço ou contato. Quando os dados
-         forem entregues, bastará preencher CONFIGURACAO_EMPRESA.
-         ===================================================== -->
+    <!-- Rodapé provisório, sem inventar dados de contato que ainda não foram informados. -->
     <footer class="site-footer">
-        <div class="container footer-grid">
-            <div><a class="brand brand--footer" href="#inicio"><span class="brand__icon" aria-hidden="true">❄</span><span class="brand__text"><strong data-company-name>Locação de Ar-Condicionado</strong><small>Climatização sob medida</small></span></a><p>Dimensione, compare e prepare sua solicitação de locação de forma organizada.</p></div>
-            <div class="footer-links"><strong>Navegação</strong><a href="#catalogo">Equipamentos</a><a href="#calculadora">Calculadora</a><a href="#orcamento">Orçamento</a><a href="#referencias">Referências</a></div>
-            <div class="footer-links"><strong>Atendimento</strong><span data-company-phone>Solicitação pelo formulário</span><span data-company-email>Contato oficial sob confirmação</span><span data-company-region>Consulte disponibilidade para sua cidade</span></div>
+        <div class="container footer-content">
+            <a class="brand brand-footer" href="#inicio">
+                <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 16h20c6 0 10-3 10-8"/><path d="M8 24h28c5 0 8 3 8 8s-3 8-8 8"/><path d="M8 32h14c5 0 8 3 8 8"/></svg></span>
+                <span class="brand-copy"><strong>Locação</strong><small>Ar-condicionado</small></span>
+            </a>
+            <p>Locação e climatização sob medida para diferentes ambientes e períodos.</p>
+            <span>© <span data-current-year></span> — Projeto em desenvolvimento.</span>
         </div>
-        <div class="container footer-bottom"><span>© <span data-current-year></span> <span data-company-name>Locação de Ar-Condicionado</span>.</span><span>Referências sujeitas à confirmação comercial.</span></div>
     </footer>
 
-    <a class="floating-quote" href="#orcamento" aria-label="Abrir orçamento">Orçamento</a>
+    <!-- Atalho móvel para a principal ação comercial. -->
+    <a class="mobile-quote-bar" href="#orcamento">Solicitar orçamento</a>
 
-    <!-- Dados são carregados antes da lógica para que o catálogo e o
-         simulador encontrem todas as configurações ao inicializar. -->
-    <script src="js/data.js"></script>
+    <!-- Arquivo JavaScript responsável por catálogo, calculadora, orçamento e interações. -->
     <script src="js/script.js"></script>
 </body>
 </html>
