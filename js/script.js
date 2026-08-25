@@ -11,6 +11,26 @@ const CONFIGURACAO_EMPRESA = {
 };
 
 /* =========================================================
+   1.1. CARREGAMENTO DOS ESTILOS COMPLEMENTARES DE BOTÕES
+   O CSS principal cuida do layout geral. O arquivo buttons.css reúne
+   o acabamento visual dos controles interativos que antes pareciam
+   links ou botões sem estilo. Carregamos apenas uma vez.
+   ========================================================= */
+function carregarEstilosDosBotoes() {
+    if (document.querySelector('link[data-button-styles]')) {
+        return;
+    }
+
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'css/buttons.css';
+    link.dataset.buttonStyles = 'true';
+    document.head.appendChild(link);
+}
+
+carregarEstilosDosBotoes();
+
+/* =========================================================
    2. CATÁLOGO
    Utilizamos fotografias oficiais de equipamentos reais apenas como
    referência visual. Marca/modelo efetivamente locados deverão ser
