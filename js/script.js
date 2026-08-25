@@ -1,266 +1,300 @@
 'use strict';
 
 /* =========================================================
-   1. CONFIGURAÇÃO COMERCIAL CENTRAL
-   ---------------------------------------------------------
-   Todo valor que a empresa provavelmente precisará ajustar fica
-   concentrado neste objeto. Quando os preços reais forem definidos,
-   altere SOMENTE esta área para atualizar a simulação do site.
-
-   IMPORTANTE:
-   - os preços abaixo são referências temporárias de desenvolvimento;
-   - não representam tabela oficial da empresa;
-   - o site sempre informa que o resultado é uma estimativa.
+   LÓGICA PRINCIPAL DO SITE
+   Este arquivo cuida de catálogo, calculadora, orçamento, menu e
+   geração da solicitação. Dados comerciais ficam em js/data.js.
    ========================================================= */
-const CONFIGURACAO_COMERCIAL = {
-    /* Número do WhatsApp somente com DDI + DDD + número, sem símbolos. */
-    whatsappNumero: '',
-
-    /* Valores de deslocamento usados na composição do orçamento. */
-    deslocamento: {
-        local: 0,
-        ate30: 80,
-        '31a60': 160,
-        '61a100': 280,
-        avaliar: 0
-    },
-
-    /* Fator aplicado sobre a mensalidade-base conforme o período. */
-    fatoresPeriodo: [
-        { ateDias: 3, fator: 0.45 },
-        { ateDias: 7, fator: 0.60 },
-        { ateDias: 15, fator: 0.80 },
-        { ateDias: 30, fator: 1.00 }
-    ],
-
-    /* Para períodos acima de 30 dias o valor mensal recebe desconto progressivo. */
-    descontoPeriodoLongo: {
-        ate60Dias: 0.10,
-        acima60Dias: 0.18
-    },
-
-    /* Faixas de desconto automático conforme a quantidade de equipamentos. */
-    descontosQuantidade: [
-        { minimo: 6, percentual: 0.12 },
-        { minimo: 4, percentual: 0.08 },
-        { minimo: 2, percentual: 0.05 },
-        { minimo: 1, percentual: 0 }
-    ]
-};
 
 /* =========================================================
-   2. CATÁLOGO E PREÇOS-BASE
-   ---------------------------------------------------------
-   Cada item contém capacidade, tipo, foto comercial de referência,
-   mensalidade-base de teste e custos estimados de instalação/retirada.
+   1. VALIDAÇÃO DOS DADOS CARREGADOS
+   Se data.js não for carregado, interrompemos com erro explícito em
+   vez de deixar a página falhar silenciosamente.
    ========================================================= */
-const catalogoEquipamentos = [
-    {
-        id: 'split-9000', tipo: 'Split Hi Wall', capacidade: 9000,
-        titulo: 'Split 9.000 BTU/h',
-        aplicacao: 'Quartos, salas compactas e pequenos escritórios.',
-        mensalidadeBase: 149, instalacao: 320, retirada: 100,
-        imagem: 'https://mideabr.vtexassets.com/arquivos/ids/173498-1440-auto/01-ar-condicionado-midea-ai-ecomaster-38EZVCA12M5-packshot.webp?quality=9&v=638829347183700000',
-        fonteImagem: 'Midea - imagem comercial de referência'
-    },
-    {
-        id: 'split-12000', tipo: 'Split Hi Wall', capacidade: 12000,
-        titulo: 'Split 12.000 BTU/h',
-        aplicacao: 'Salas, escritórios e ambientes residenciais de porte pequeno a médio.',
-        mensalidadeBase: 190, instalacao: 350, retirada: 100,
-        imagem: 'https://mideabr.vtexassets.com/arquivos/ids/173498-1440-auto/01-ar-condicionado-midea-ai-ecomaster-38EZVCA12M5-packshot.webp?quality=9&v=638829347183700000',
-        fonteImagem: 'Midea - imagem comercial de referência'
-    },
-    {
-        id: 'split-18000', tipo: 'Split Hi Wall', capacidade: 18000,
-        titulo: 'Split 18.000 BTU/h',
-        aplicacao: 'Salas maiores, lojas pequenas e escritórios com maior ocupação.',
-        mensalidadeBase: 280, instalacao: 420, retirada: 120,
-        imagem: 'https://mideabr.vtexassets.com/arquivos/ids/173498-1440-auto/01-ar-condicionado-midea-ai-ecomaster-38EZVCA12M5-packshot.webp?quality=9&v=638829347183700000',
-        fonteImagem: 'Midea - imagem comercial de referência'
-    },
-    {
-        id: 'split-24000', tipo: 'Split Hi Wall', capacidade: 24000,
-        titulo: 'Split 24.000 BTU/h',
-        aplicacao: 'Ambientes médios, comércios e salas com carga térmica mais elevada.',
-        mensalidadeBase: 390, instalacao: 480, retirada: 140,
-        imagem: 'https://mideabr.vtexassets.com/arquivos/ids/173498-1440-auto/01-ar-condicionado-midea-ai-ecomaster-38EZVCA12M5-packshot.webp?quality=9&v=638829347183700000',
-        fonteImagem: 'Midea - imagem comercial de referência'
-    },
-    {
-        id: 'portatil-12000', tipo: 'Portátil', capacidade: 12000,
-        titulo: 'Portátil 12.000 BTU/h',
-        aplicacao: 'Demandas temporárias, apoio emergencial e locais sem instalação fixa.',
-        mensalidadeBase: 239, instalacao: 80, retirada: 50,
-        imagem: 'https://philco.vtexassets.com/arquivos/ids/281007-800-800?aspect=true&height=800&v=639100443148530000&width=800',
-        fonteImagem: 'Philco - imagem comercial de referência'
-    },
-    {
-        id: 'piso-teto-36000', tipo: 'Piso-Teto', capacidade: 36000,
-        titulo: 'Piso-Teto 36.000 BTU/h',
-        aplicacao: 'Lojas, restaurantes, salões e ambientes comerciais amplos.',
-        mensalidadeBase: 690, instalacao: 650, retirada: 200,
-        imagem: 'https://mideabr.vtexassets.com/arquivos/ids/175116-1440-auto/1.-Capa---com-selo.webp?quality=9&v=638906874090730000',
-        fonteImagem: 'Midea - imagem comercial de referência'
-    },
-    {
-        id: 'piso-teto-60000', tipo: 'Piso-Teto', capacidade: 60000,
-        titulo: 'Piso-Teto 60.000 BTU/h',
-        aplicacao: 'Grandes espaços comerciais, auditórios e áreas com alta circulação.',
-        mensalidadeBase: 950, instalacao: 850, retirada: 260,
-        imagem: 'https://mideabr.vtexassets.com/arquivos/ids/175116-1440-auto/1.-Capa---com-selo.webp?quality=9&v=638906874090730000',
-        fonteImagem: 'Midea - imagem comercial de referência'
-    },
-    {
-        id: 'cassete-36000', tipo: 'Cassete', capacidade: 36000,
-        titulo: 'Cassete 36.000 BTU/h',
-        aplicacao: 'Escritórios, lojas e ambientes com forro e distribuição de ar em várias direções.',
-        mensalidadeBase: 790, instalacao: 800, retirada: 250,
-        imagem: 'https://mideabr.vtexassets.com/arquivos/ids/171962-1440-auto/00_Cassete-4vias_38CQVE60515MC_Frente_kit.webp?quality=9&v=638785947667030000',
-        fonteImagem: 'Carrier/Midea - imagem comercial de referência'
-    }
-];
+const APP = window.APP_DATA;
+
+if (!APP || !APP.empresa || !Array.isArray(APP.equipamentos)) {
+    throw new Error('APP_DATA não foi carregado corretamente. Verifique js/data.js.');
+}
+
+const EMPRESA = APP.empresa;
+const FONTES = APP.fontes;
+const EQUIPAMENTOS = APP.equipamentos;
+const BENCHMARKS = APP.benchmarks;
 
 /* =========================================================
-   3. REFERÊNCIAS DO DOM
+   2. REFERÊNCIAS DO DOM
+   Guardamos elementos usados diversas vezes para deixar o restante
+   do código mais legível e evitar buscas repetidas no documento.
    ========================================================= */
 const header = document.querySelector('[data-header]');
 const menuToggle = document.querySelector('[data-menu-toggle]');
 const navigation = document.querySelector('[data-navigation]');
+
 const catalogContainer = document.querySelector('[data-catalog]');
+const filterButtons = [...document.querySelectorAll('[data-filter]')];
+const benchmarkTable = document.querySelector('[data-benchmark-table]');
+
 const calculatorForm = document.querySelector('[data-calculator-form]');
 const calculatorResult = document.querySelector('[data-calculator-result]');
 const resultRecommendation = document.querySelector('[data-result-recommendation]');
 const resultArea = document.querySelector('[data-result-area]');
 const resultLoad = document.querySelector('[data-result-load]');
+const resultUnits = document.querySelector('[data-result-units]');
 const resultSolution = document.querySelector('[data-result-solution]');
-const sendToQuoteButton = document.querySelector('[data-send-to-quote]');
 const recalculateButton = document.querySelector('[data-recalculate]');
+const sendToQuoteButton = document.querySelector('[data-send-to-quote]');
+
 const quoteForm = document.querySelector('[data-quote-form]');
+const quoteMode = document.querySelector('[data-quote-mode]');
 const quoteEquipment = document.querySelector('[data-quote-equipment]');
 const quoteEnvironment = document.querySelector('[data-quote-environment]');
 const quoteSummary = document.querySelector('[data-quote-summary]');
-const quoteTotal = document.querySelector('[data-quote-total]');
-const quoteBreakdown = document.querySelector('[data-quote-breakdown]');
-const formFeedback = document.querySelector('[data-form-feedback]');
+const monthlyFields = document.querySelector('[data-monthly-fields]');
+const quantityInput = document.querySelector('#quantidade');
+const monthsInput = document.querySelector('#meses');
 const phoneInput = document.querySelector('#telefone');
-const currentYear = document.querySelector('[data-current-year]');
+const formFeedback = document.querySelector('[data-form-feedback]');
+
+const quoteStatus = document.querySelector('[data-quote-status]');
+const quoteMonthly = document.querySelector('[data-quote-monthly]');
+const quotePriceNote = document.querySelector('[data-quote-price-note]');
+const quoteProduct = document.querySelector('[data-quote-product]');
+const quoteQuantity = document.querySelector('[data-quote-quantity]');
+const quotePeriod = document.querySelector('[data-quote-period]');
+const quoteTotal = document.querySelector('[data-quote-total]');
+
+/* Guarda o último cálculo válido para transferi-lo ao orçamento. */
 let ultimoCalculo = null;
 
 /* =========================================================
-   4. FUNÇÕES DE FORMATAÇÃO E NAVEGAÇÃO
+   3. FORMATAÇÃO E SEGURANÇA DE TEXTO
    ========================================================= */
-function formatarNumero(valor) {
-    return new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 }).format(valor);
-}
 
+/**
+ * Formata um valor em reais usando padrão brasileiro.
+ * @param {number} valor Valor numérico.
+ * @returns {string} Exemplo: R$ 190,00.
+ */
 function formatarMoeda(valor) {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2
+    }).format(valor);
 }
 
+/**
+ * Formata números inteiros com separador brasileiro.
+ * @param {number} valor Número original.
+ * @returns {string} Exemplo: 12000 -> 12.000.
+ */
+function formatarNumero(valor) {
+    return new Intl.NumberFormat('pt-BR', {
+        maximumFractionDigits: 0
+    }).format(valor);
+}
+
+/**
+ * Formata uma medida com até duas casas decimais.
+ * @param {number} valor Medida original.
+ * @returns {string} Medida formatada.
+ */
 function formatarMedida(valor) {
-    return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(valor);
+    return new Intl.NumberFormat('pt-BR', {
+        maximumFractionDigits: 2
+    }).format(valor);
 }
 
+/**
+ * Escapa caracteres especiais antes de inserir texto em innerHTML.
+ * @param {unknown} valor Valor que será exibido.
+ * @returns {string} Conteúdo seguro para HTML.
+ */
+function escaparHtml(valor) {
+    return String(valor)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+/**
+ * Rola suavemente até a área de orçamento.
+ */
 function irParaOrcamento() {
-    document.querySelector('#orcamento')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function encontrarEquipamentoPorId(id) {
-    return catalogoEquipamentos.find((equipamento) => equipamento.id === id) || null;
-}
-
-/* =========================================================
-   5. RENDERIZAÇÃO DO CATÁLOGO
-   ========================================================= */
-function renderizarCatalogo() {
-    if (!catalogContainer) return;
-
-    catalogContainer.innerHTML = catalogoEquipamentos.map((equipamento) => `
-        <article class="product-card">
-            <div class="product-visual">
-                <img src="${equipamento.imagem}" alt="${equipamento.titulo} em imagem comercial de referência" loading="lazy">
-                <span class="product-type">${equipamento.tipo}</span>
-            </div>
-            <div class="product-body">
-                <span class="product-tag">${equipamento.fonteImagem}</span>
-                <h3>${equipamento.titulo}</h3>
-                <p>${equipamento.aplicacao}</p>
-                <div class="product-specs">
-                    <span><strong>${formatarNumero(equipamento.capacidade)}</strong> BTU/h</span>
-                    <span>A partir de <strong>${formatarMoeda(equipamento.mensalidadeBase)}</strong> / base mensal*</span>
-                </div>
-                <button class="button button-full" type="button" data-product-quote data-product-id="${equipamento.id}">Simular locação</button>
-            </div>
-        </article>
-    `).join('');
-
-    catalogContainer.querySelectorAll('[data-product-quote]').forEach((button) => {
-        button.addEventListener('click', () => {
-            const productId = button.dataset.productId;
-            if (quoteEquipment && encontrarEquipamentoPorId(productId)) {
-                quoteEquipment.value = productId;
-                ultimoCalculo = null;
-                if (quoteSummary) quoteSummary.value = '';
-                atualizarOrcamento();
-                irParaOrcamento();
-            }
-        });
+    document.querySelector('#orcamento')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
     });
 }
 
 /* =========================================================
-   6. OPÇÕES DO SELECT DE ORÇAMENTO
+   4. DADOS DA EMPRESA NO LAYOUT
+   Fallbacks são neutros e não inventam telefone/e-mail/região.
    ========================================================= */
-function preencherOpcoesDeEquipamento() {
-    if (!quoteEquipment) return;
-    const opcoes = catalogoEquipamentos.map((equipamento) =>
-        `<option value="${equipamento.id}">${equipamento.titulo} — ${equipamento.tipo}</option>`
-    ).join('');
-    quoteEquipment.innerHTML = `<option value="">Selecione um equipamento</option>${opcoes}`;
+function aplicarDadosDaEmpresa() {
+    document.querySelectorAll('[data-company-name]').forEach((elemento) => {
+        elemento.textContent = EMPRESA.nome;
+    });
+
+    const phoneLabel = document.querySelector('[data-company-phone]');
+    const emailLabel = document.querySelector('[data-company-email]');
+    const regionLabel = document.querySelector('[data-company-region]');
+
+    if (phoneLabel) {
+        phoneLabel.textContent = EMPRESA.whatsapp
+            ? `WhatsApp: +${EMPRESA.whatsapp}`
+            : 'Solicitação pelo formulário';
+    }
+
+    if (emailLabel) {
+        emailLabel.textContent = EMPRESA.email || 'Contato oficial sob confirmação';
+    }
+
+    if (regionLabel) {
+        regionLabel.textContent = EMPRESA.regiaoAtendimento || 'Consulte disponibilidade para sua cidade';
+    }
 }
 
 /* =========================================================
-   7. CÁLCULO DE CARGA TÉRMICA SIMPLIFICADO
-   Regras: área, insolação, altura, pessoas, eletrônicos e aberturas.
-   Não substitui cálculo técnico de carga térmica.
+   5. CATÁLOGO
+   Cards são gerados a partir de data.js e podem ser filtrados por
+   tipo sem duplicação de HTML.
+   ========================================================= */
+function renderizarCatalogo(filtro = 'todos') {
+    if (!catalogContainer) return;
+
+    const lista = filtro === 'todos'
+        ? EQUIPAMENTOS
+        : EQUIPAMENTOS.filter((equipamento) => equipamento.tipo === filtro);
+
+    catalogContainer.innerHTML = lista.map((equipamento) => {
+        const preco = equipamento.valorReferenciaMensal !== null
+            ? `<strong>${formatarMoeda(equipamento.valorReferenciaMensal)}/mês</strong><small>Benchmark público; valor final sujeito à confirmação.</small>`
+            : '<strong>Sob consulta</strong><small>Sem benchmark mensal comparável automatizado.</small>';
+
+        return `
+            <article class="product-card">
+                <div class="product-card__image">
+                    <span>${escaparHtml(equipamento.categoria)}</span>
+                    <img src="${equipamento.imagem}" alt="${escaparHtml(`${equipamento.categoria} ${formatarNumero(equipamento.capacidade)} BTU/h - ${equipamento.marcaReferencia}`)}" loading="lazy">
+                </div>
+                <div class="product-card__body">
+                    <small class="product-card__brand">${escaparHtml(equipamento.marcaReferencia)} · modelo de referência</small>
+                    <h3>${escaparHtml(equipamento.categoria)} ${formatarNumero(equipamento.capacidade)} BTU/h</h3>
+                    <p>${escaparHtml(equipamento.aplicacao)}</p>
+                    <div class="product-specs">
+                        <div><span>Capacidade</span><strong>${formatarNumero(equipamento.capacidade)} BTU/h</strong></div>
+                        <div><span>Área indicativa</span><strong>${escaparHtml(equipamento.areaIndicativa)}</strong></div>
+                        <div><span>Tensão ref.</span><strong>${escaparHtml(equipamento.tensaoReferencia)}</strong></div>
+                        <div><span>Modelo ref.</span><strong>${escaparHtml(equipamento.modeloReferencia)}</strong></div>
+                    </div>
+                    <div class="product-price"><span>Referência mensal</span>${preco}</div>
+                    <div class="product-actions">
+                        <button class="button" type="button" data-product-quote="${equipamento.id}">Simular locação</button>
+                        <a href="${equipamento.fonteProduto}" target="_blank" rel="noopener noreferrer">Fonte oficial</a>
+                    </div>
+                </div>
+            </article>`;
+    }).join('');
+
+    catalogContainer.querySelectorAll('[data-product-quote]').forEach((button) => {
+        button.addEventListener('click', () => {
+            selecionarEquipamentoNoOrcamento(button.dataset.productQuote);
+            irParaOrcamento();
+        });
+    });
+}
+
+/* Filtros visuais do catálogo. */
+filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+        filterButtons.forEach((item) => item.classList.remove('active'));
+        button.classList.add('active');
+        renderizarCatalogo(button.dataset.filter || 'todos');
+    });
+});
+
+/* =========================================================
+   6. TABELA DE REFERÊNCIAS PÚBLICAS
+   ========================================================= */
+function renderizarBenchmarks() {
+    if (!benchmarkTable) return;
+
+    benchmarkTable.innerHTML = BENCHMARKS.map((item) => `
+        <tr>
+            <td><strong>${escaparHtml(item.categoria)}</strong></td>
+            <td>${escaparHtml(item.capacidade)}</td>
+            <td><strong>${escaparHtml(item.valor)}</strong></td>
+            <td>${escaparHtml(item.observacao)}</td>
+        </tr>`).join('');
+}
+
+/* =========================================================
+   7. CÁLCULO SIMPLIFICADO DE CARGA TÉRMICA
+   Fórmula de triagem comercial usada no site:
+   - 600 BTU/h por m² em sombra/condição normal;
+   - 800 BTU/h por m² com sol forte;
+   - ajuste proporcional para pé-direito acima de 2,70m;
+   - +600 BTU/h por pessoa adicional à primeira;
+   - +600 BTU/h por eletrônico relevante;
+   - +600 BTU/h por abertura grande.
+
+   Este cálculo NÃO substitui projeto técnico/normativo de carga.
    ========================================================= */
 function calcularCargaTermica({ largura, comprimento, peDireito, pessoas, eletronicos, aberturas, sol }) {
     const area = largura * comprimento;
-    const fatoresSol = { baixo: 550, normal: 600, forte: 800 };
-    const fatorMetroQuadrado = fatoresSol[sol] || fatoresSol.normal;
-    const fatorAltura = Math.max(1, peDireito / 2.7);
-    const cargaBase = area * fatorMetroQuadrado * fatorAltura;
+    const basePorMetro = sol === 'forte' ? 800 : 600;
+    const fatorPeDireito = Math.max(1, peDireito / 2.7);
+    const cargaArea = area * basePorMetro * fatorPeDireito;
     const cargaPessoas = Math.max(0, pessoas - 1) * 600;
     const cargaEletronicos = eletronicos * 600;
-    const cargaAntesAberturas = cargaBase + cargaPessoas + cargaEletronicos;
-    const fatorAberturas = 1 + (Math.min(aberturas, 10) * 0.05);
-    const cargaTotal = cargaAntesAberturas * fatorAberturas;
-    return { area, fatorMetroQuadrado, fatorAltura, cargaPessoas, cargaEletronicos, fatorAberturas, cargaTotal };
+    const cargaAberturas = aberturas * 600;
+    const cargaTotal = cargaArea + cargaPessoas + cargaEletronicos + cargaAberturas;
+
+    return {
+        area,
+        cargaArea,
+        cargaPessoas,
+        cargaEletronicos,
+        cargaAberturas,
+        cargaTotal
+    };
 }
 
 /* =========================================================
-   8. MOTOR DE RECOMENDAÇÃO DE EQUIPAMENTO
+   8. MOTOR DE RECOMENDAÇÃO
+   Testa até 10 unidades iguais. O score penaliza tanto excesso de
+   capacidade quanto muitas unidades, evitando resultados pouco
+   práticos como três aparelhos pequenos quando um maior atende bem.
    ========================================================= */
-function recomendarEquipamento(cargaNecessaria) {
-    const faixas = [
-        { limite: 9000, id: 'split-9000' },
-        { limite: 12000, id: 'split-12000' },
-        { limite: 18000, id: 'split-18000' },
-        { limite: 24000, id: 'split-24000' },
-        { limite: 36000, id: 'piso-teto-36000' },
-        { limite: 60000, id: 'piso-teto-60000' }
-    ];
+function encontrarMelhorSolucao(cargaNecessaria) {
+    const candidatos = EQUIPAMENTOS.filter((equipamento) => equipamento.automatico);
+    let melhor = null;
 
-    const faixa = faixas.find((item) => cargaNecessaria <= item.limite);
-    if (faixa) {
-        const equipamento = encontrarEquipamentoPorId(faixa.id);
-        return { equipamento, quantidade: 1, capacidadeTotal: equipamento.capacidade };
-    }
+    candidatos.forEach((equipamento) => {
+        for (let quantidade = 1; quantidade <= 10; quantidade += 1) {
+            const capacidadeTotal = equipamento.capacidade * quantidade;
+            if (capacidadeTotal < cargaNecessaria) continue;
 
-    const equipamento = encontrarEquipamentoPorId('piso-teto-60000');
-    const quantidade = Math.ceil(cargaNecessaria / equipamento.capacidade);
-    return { equipamento, quantidade, capacidadeTotal: equipamento.capacidade * quantidade };
+            const excesso = capacidadeTotal - cargaNecessaria;
+            const penalidadeUnidades = (quantidade - 1) * 3000;
+            const score = excesso + penalidadeUnidades;
+
+            if (!melhor || score < melhor.score || (score === melhor.score && quantidade < melhor.quantidade)) {
+                melhor = {
+                    equipamento,
+                    quantidade,
+                    capacidadeTotal,
+                    score
+                };
+            }
+        }
+    });
+
+    return melhor;
 }
 
 /* =========================================================
@@ -269,222 +303,313 @@ function recomendarEquipamento(cargaNecessaria) {
 calculatorForm?.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const data = new FormData(calculatorForm);
+    const dados = new FormData(calculatorForm);
     const entrada = {
-        tipoAmbiente: String(data.get('tipoAmbiente') || ''),
-        largura: Number(data.get('largura')),
-        comprimento: Number(data.get('comprimento')),
-        peDireito: Number(data.get('peDireito')),
-        pessoas: Number(data.get('pessoas')),
-        eletronicos: Number(data.get('eletronicos')),
-        aberturas: Number(data.get('aberturas')),
-        sol: String(data.get('sol') || 'normal')
+        tipoAmbiente: String(dados.get('tipoAmbiente') || ''),
+        largura: Number(dados.get('largura')),
+        comprimento: Number(dados.get('comprimento')),
+        peDireito: Number(dados.get('peDireito')),
+        pessoas: Number(dados.get('pessoas')),
+        eletronicos: Number(dados.get('eletronicos')),
+        aberturas: Number(dados.get('aberturas')),
+        sol: String(dados.get('sol') || 'normal')
     };
 
-    const invalido = Object.entries(entrada).some(([chave, valor]) =>
-        chave !== 'tipoAmbiente' && chave !== 'sol' && (!Number.isFinite(valor) || valor < 0)
-    );
-    if (invalido || entrada.largura <= 0 || entrada.comprimento <= 0 || entrada.peDireito < 2 || entrada.pessoas < 1) return;
+    const invalido =
+        !Number.isFinite(entrada.largura) || entrada.largura <= 0 ||
+        !Number.isFinite(entrada.comprimento) || entrada.comprimento <= 0 ||
+        !Number.isFinite(entrada.peDireito) || entrada.peDireito < 2 ||
+        !Number.isFinite(entrada.pessoas) || entrada.pessoas < 1 ||
+        !Number.isFinite(entrada.eletronicos) || entrada.eletronicos < 0 ||
+        !Number.isFinite(entrada.aberturas) || entrada.aberturas < 0;
 
-    const calculo = calcularCargaTermica(entrada);
-    const recomendacao = recomendarEquipamento(calculo.cargaTotal);
+    if (invalido) return;
 
-    resultRecommendation.textContent = formatarNumero(recomendacao.capacidadeTotal);
-    resultArea.textContent = `${formatarMedida(calculo.area)} m²`;
-    resultLoad.textContent = `${formatarNumero(Math.ceil(calculo.cargaTotal))} BTU/h`;
+    const carga = calcularCargaTermica(entrada);
+    const solucao = encontrarMelhorSolucao(carga.cargaTotal);
 
-    const quantidadeTexto = recomendacao.quantidade === 1
-        ? `1 ${recomendacao.equipamento.titulo}`
-        : `${recomendacao.quantidade} unidades de ${recomendacao.equipamento.titulo}`;
+    resultArea.textContent = `${formatarMedida(carga.area)} m²`;
+    resultLoad.textContent = `${formatarNumero(Math.ceil(carga.cargaTotal))} BTU/h`;
 
-    resultSolution.textContent = `Sugestão inicial: ${quantidadeTexto}. Capacidade nominal total de ${formatarNumero(recomendacao.capacidadeTotal)} BTU/h.`;
-    ultimoCalculo = { ...entrada, ...calculo, recomendacao };
+    if (!solucao) {
+        resultRecommendation.textContent = 'Avaliação';
+        resultUnits.textContent = '--';
+        resultSolution.textContent = 'A carga ultrapassa as combinações automáticas previstas. Solicite dimensionamento técnico.';
+        ultimoCalculo = { entrada, carga, solucao: null };
+    } else {
+        resultRecommendation.textContent = formatarNumero(solucao.capacidadeTotal);
+        resultUnits.textContent = String(solucao.quantidade);
+        resultSolution.textContent = solucao.quantidade === 1
+            ? `Sugestão inicial: 1 ${solucao.equipamento.categoria} de ${formatarNumero(solucao.equipamento.capacidade)} BTU/h.`
+            : `Sugestão inicial: ${solucao.quantidade} unidades de ${formatarNumero(solucao.equipamento.capacidade)} BTU/h, totalizando ${formatarNumero(solucao.capacidadeTotal)} BTU/h.`;
+        ultimoCalculo = { entrada, carga, solucao };
+    }
+
     calculatorForm.hidden = true;
     calculatorResult.hidden = false;
 });
 
+/* Permite editar os valores sem apagar o formulário. */
 recalculateButton?.addEventListener('click', () => {
     calculatorResult.hidden = true;
     calculatorForm.hidden = false;
 });
 
+/* =========================================================
+   10. TRANSFERÊNCIA DO CÁLCULO PARA O ORÇAMENTO
+   ========================================================= */
 sendToQuoteButton?.addEventListener('click', () => {
     if (!ultimoCalculo) return;
 
-    const { tipoAmbiente, largura, comprimento, peDireito, pessoas, eletronicos, aberturas, sol, area, cargaTotal, recomendacao } = ultimoCalculo;
-    if (quoteEnvironment) quoteEnvironment.value = tipoAmbiente;
-    if (quoteEquipment) quoteEquipment.value = recomendacao.equipamento.id;
+    const { entrada, carga, solucao } = ultimoCalculo;
 
-    const quantityInput = document.querySelector('#quantidade');
-    if (quantityInput) quantityInput.value = String(recomendacao.quantidade);
+    if (quoteEnvironment) quoteEnvironment.value = entrada.tipoAmbiente;
+
+    if (solucao) {
+        selecionarEquipamentoNoOrcamento(solucao.equipamento.id);
+        if (quantityInput) quantityInput.value = String(solucao.quantidade);
+    }
 
     if (quoteSummary) {
-        const solTexto = { baixo: 'baixa', normal: 'normal', forte: 'forte' }[sol] || 'normal';
         quoteSummary.value = [
-            `Ambiente: ${tipoAmbiente}`,
-            `Dimensões: ${formatarMedida(largura)} m x ${formatarMedida(comprimento)} m`,
-            `Área: ${formatarMedida(area)} m²`,
-            `Pé-direito: ${formatarMedida(peDireito)} m`,
-            `Pessoas: ${pessoas}`,
-            `Eletrônicos relevantes: ${eletronicos}`,
-            `Aberturas grandes: ${aberturas}`,
-            `Incidência solar: ${solTexto}`,
-            `Carga térmica estimada: ${formatarNumero(Math.ceil(cargaTotal))} BTU/h`,
-            `Sugestão: ${recomendacao.quantidade} x ${recomendacao.equipamento.titulo}`
+            `Ambiente: ${entrada.tipoAmbiente}`,
+            `Dimensões: ${formatarMedida(entrada.largura)} m x ${formatarMedida(entrada.comprimento)} m`,
+            `Pé-direito: ${formatarMedida(entrada.peDireito)} m`,
+            `Área: ${formatarMedida(carga.area)} m²`,
+            `Pessoas: ${entrada.pessoas}`,
+            `Eletrônicos relevantes: ${entrada.eletronicos}`,
+            `Portas/janelas grandes: ${entrada.aberturas}`,
+            `Sol: ${entrada.sol === 'forte' ? 'forte' : 'normal/sombra'}`,
+            `Carga estimada: ${formatarNumero(Math.ceil(carga.cargaTotal))} BTU/h`,
+            solucao
+                ? `Sugestão: ${solucao.quantidade} x ${formatarNumero(solucao.equipamento.capacidade)} BTU/h`
+                : 'Sugestão: avaliação técnica necessária'
         ].join('\n');
     }
 
-    atualizarOrcamento();
+    atualizarResumoOrcamento();
     irParaOrcamento();
 });
 
 /* =========================================================
-   10. REGRAS DE PREÇO DO PERÍODO
+   11. SELECT DE EQUIPAMENTOS DO ORÇAMENTO
    ========================================================= */
-function calcularValorLocacaoPorUnidade(equipamento, dias) {
-    const faixaCurta = CONFIGURACAO_COMERCIAL.fatoresPeriodo.find((faixa) => dias <= faixa.ateDias);
-    if (faixaCurta) return equipamento.mensalidadeBase * faixaCurta.fator;
+function preencherSelectEquipamentos() {
+    if (!quoteEquipment) return;
 
-    const mesesEquivalentes = dias / 30;
-    const desconto = dias <= 60
-        ? CONFIGURACAO_COMERCIAL.descontoPeriodoLongo.ate60Dias
-        : CONFIGURACAO_COMERCIAL.descontoPeriodoLongo.acima60Dias;
-    return equipamento.mensalidadeBase * mesesEquivalentes * (1 - desconto);
+    quoteEquipment.innerHTML = EQUIPAMENTOS.map((equipamento) => {
+        const preco = equipamento.valorReferenciaMensal !== null
+            ? ` — ref. ${formatarMoeda(equipamento.valorReferenciaMensal)}/mês`
+            : ' — sob consulta';
+
+        return `<option value="${equipamento.id}">${escaparHtml(equipamento.categoria)} ${formatarNumero(equipamento.capacidade)} BTU/h${preco}</option>`;
+    }).join('');
 }
 
-function obterDescontoQuantidade(quantidade) {
-    const faixa = CONFIGURACAO_COMERCIAL.descontosQuantidade.find((item) => quantidade >= item.minimo);
-    return faixa ? faixa.percentual : 0;
+/**
+ * Seleciona um equipamento pelo id, se ele existir no catálogo.
+ * @param {string} equipamentoId Identificador definido em data.js.
+ */
+function selecionarEquipamentoNoOrcamento(equipamentoId) {
+    if (!quoteEquipment) return;
+    const existe = EQUIPAMENTOS.some((equipamento) => equipamento.id === equipamentoId);
+    if (existe) quoteEquipment.value = equipamentoId;
 }
 
 /* =========================================================
-   11. CÁLCULO COMPLETO DO ORÇAMENTO
+   12. CÁLCULO FINANCEIRO DA REFERÊNCIA MENSAL
+   Não inventamos taxa de instalação, frete ou logística. O cálculo
+   automático é: benchmark mensal × quantidade × prazo, aplicando
+   somente descontos explicitamente configurados em data.js.
    ========================================================= */
 function calcularOrcamentoAtual() {
-    if (!quoteForm || !quoteEquipment) return null;
-    const equipamento = encontrarEquipamentoPorId(quoteEquipment.value);
+    const equipamento = EQUIPAMENTOS.find((item) => item.id === quoteEquipment?.value);
+    const quantidade = Math.max(1, Number(quantityInput?.value || 1));
+    const meses = Math.max(1, Number(monthsInput?.value || 1));
+    const modalidade = quoteMode?.value || 'mensal';
+
     if (!equipamento) return null;
 
-    const quantidade = Math.max(1, Number(document.querySelector('#quantidade')?.value) || 1);
-    const dias = Math.max(1, Number(document.querySelector('#periodoDias')?.value) || 1);
-    const deslocamentoKey = document.querySelector('#deslocamento')?.value || 'local';
-    const incluirInstalacao = Boolean(document.querySelector('#incluirInstalacao')?.checked);
-    const incluirRetirada = Boolean(document.querySelector('#incluirRetirada')?.checked);
-    const locacaoUnitaria = calcularValorLocacaoPorUnidade(equipamento, dias);
-    const subtotalLocacao = locacaoUnitaria * quantidade;
-    const descontoPercentual = obterDescontoQuantidade(quantidade);
-    const descontoValor = subtotalLocacao * descontoPercentual;
-    const instalacao = incluirInstalacao ? equipamento.instalacao * quantidade : 0;
-    const retirada = incluirRetirada ? equipamento.retirada * quantidade : 0;
-    const deslocamento = CONFIGURACAO_COMERCIAL.deslocamento[deslocamentoKey] ?? 0;
-    const total = subtotalLocacao - descontoValor + instalacao + retirada + deslocamento;
+    const permiteCalculo = modalidade !== 'evento' && equipamento.valorReferenciaMensal !== null;
 
-    return { equipamento, quantidade, dias, deslocamentoKey, locacaoUnitaria, subtotalLocacao, descontoPercentual, descontoValor, instalacao, retirada, deslocamento, total };
-}
-
-function atualizarOrcamento() {
-    const orcamento = calcularOrcamentoAtual();
-    if (!orcamento) {
-        if (quoteTotal) quoteTotal.textContent = 'R$ 0,00';
-        if (quoteBreakdown) quoteBreakdown.innerHTML = '<span>Selecione um equipamento para calcular.</span>';
-        return;
+    if (!permiteCalculo) {
+        return { equipamento, quantidade, meses, modalidade, mensalidade: null, totalPeriodo: null };
     }
 
-    if (quoteTotal) quoteTotal.textContent = formatarMoeda(orcamento.total);
-    if (quoteBreakdown) {
-        const deslocamentoObservacao = orcamento.deslocamentoKey === 'avaliar'
-            ? '<span class="breakdown-warning">Deslocamento acima de 100 km será avaliado separadamente.</span>'
-            : '';
-        quoteBreakdown.innerHTML = `
-            <div><span>Locação (${orcamento.quantidade} un. / ${orcamento.dias} dias)</span><strong>${formatarMoeda(orcamento.subtotalLocacao)}</strong></div>
-            <div><span>Desconto por quantidade (${Math.round(orcamento.descontoPercentual * 100)}%)</span><strong>- ${formatarMoeda(orcamento.descontoValor)}</strong></div>
-            <div><span>Instalação estimada</span><strong>${formatarMoeda(orcamento.instalacao)}</strong></div>
-            <div><span>Retirada estimada</span><strong>${formatarMoeda(orcamento.retirada)}</strong></div>
-            <div><span>Deslocamento</span><strong>${formatarMoeda(orcamento.deslocamento)}</strong></div>
-            ${deslocamentoObservacao}
-        `;
-    }
+    const descontoPrazo = Number(EMPRESA.descontos?.porPrazo?.[meses] || 0);
+    const descontoQuantidade = Number(EMPRESA.descontos?.porQuantidade || 0);
+    const fatorDesconto = Math.max(0, 1 - descontoPrazo - descontoQuantidade);
+    const mensalidadeBruta = equipamento.valorReferenciaMensal * quantidade;
+    const mensalidade = mensalidadeBruta * fatorDesconto;
+    const totalPeriodo = mensalidade * meses;
+
+    return { equipamento, quantidade, meses, modalidade, mensalidade, totalPeriodo };
 }
 
-['#equipamentoOrcamento', '#quantidade', '#periodoDias', '#deslocamento', '#incluirInstalacao', '#incluirRetirada'].forEach((seletor) => {
-    document.querySelector(seletor)?.addEventListener('input', atualizarOrcamento);
-    document.querySelector(seletor)?.addEventListener('change', atualizarOrcamento);
+/* =========================================================
+   13. RESUMO FINANCEIRO EM TEMPO REAL
+   ========================================================= */
+function atualizarResumoOrcamento() {
+    const calculo = calcularOrcamentoAtual();
+    if (!calculo) return;
+
+    const nomes = {
+        mensal: 'Mensal',
+        corporativa: 'Corporativo',
+        evento: 'Sob avaliação'
+    };
+
+    quoteStatus.textContent = nomes[calculo.modalidade] || 'Mensal';
+    quoteProduct.textContent = `${calculo.equipamento.categoria} ${formatarNumero(calculo.equipamento.capacidade)} BTU/h`;
+    quoteQuantity.textContent = String(calculo.quantidade);
+    quotePeriod.textContent = calculo.modalidade === 'evento'
+        ? 'Definido após análise'
+        : `${calculo.meses} ${calculo.meses === 1 ? 'mês' : 'meses'}`;
+
+    if (calculo.mensalidade === null) {
+        quoteMonthly.textContent = 'Sob consulta';
+        quoteTotal.textContent = 'A confirmar';
+        quotePriceNote.textContent = calculo.modalidade === 'evento'
+            ? 'Eventos dependem de data, lotação, logística, energia e montagem.'
+            : 'Este item não possui benchmark mensal automatizado comparável.';
+    } else {
+        quoteMonthly.textContent = formatarMoeda(calculo.mensalidade);
+        quoteTotal.textContent = formatarMoeda(calculo.totalPeriodo);
+        quotePriceNote.textContent = `Benchmark público pesquisado em ${FONTES.dataReferencia}; não é proposta comercial definitiva.`;
+    }
+
+    if (monthlyFields) monthlyFields.hidden = calculo.modalidade === 'evento';
+}
+
+[quoteMode, quoteEquipment, quantityInput, monthsInput].forEach((elemento) => {
+    elemento?.addEventListener('change', atualizarResumoOrcamento);
+    elemento?.addEventListener('input', atualizarResumoOrcamento);
+});
+
+/* Links de CTA podem pré-selecionar a modalidade de evento. */
+document.querySelectorAll('[data-set-quote-mode]').forEach((link) => {
+    link.addEventListener('click', () => {
+        if (quoteMode) quoteMode.value = link.dataset.setQuoteMode || 'evento';
+        atualizarResumoOrcamento();
+    });
 });
 
 /* =========================================================
-   12. GERAÇÃO DA SOLICITAÇÃO COMERCIAL
+   14. CÓDIGO ÚNICO DA SOLICITAÇÃO
+   Ajuda a empresa e o cliente a identificarem uma conversa sem
+   precisar de banco de dados nesta fase.
+   ========================================================= */
+function gerarCodigoOrcamento() {
+    const agora = new Date();
+    const data = [agora.getFullYear(), String(agora.getMonth() + 1).padStart(2, '0'), String(agora.getDate()).padStart(2, '0')].join('');
+    const sufixo = String(Math.floor(1000 + Math.random() * 9000));
+    return `ORC-${data}-${sufixo}`;
+}
+
+/* =========================================================
+   15. GERAÇÃO E ENVIO DA SOLICITAÇÃO
+   - com WhatsApp oficial configurado: abre conversa direta;
+   - sem WhatsApp: usa o compartilhamento nativo do aparelho;
+   - se o navegador não suportar compartilhamento: copia o texto.
+
+   Não simulamos envio para um destinatário inexistente.
    ========================================================= */
 quoteForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const orcamento = calcularOrcamentoAtual();
-    if (!orcamento) {
-        if (formFeedback) formFeedback.textContent = 'Selecione um equipamento antes de gerar a solicitação.';
+
+    const formData = new FormData(quoteForm);
+    const calculo = calcularOrcamentoAtual();
+    if (!calculo) return;
+
+    const codigo = gerarCodigoOrcamento();
+    const nome = String(formData.get('nome') || '').trim();
+    const telefone = String(formData.get('telefone') || '').trim();
+    const email = String(formData.get('email') || '').trim();
+    const cidade = String(formData.get('cidade') || '').trim();
+    const tipoUso = String(formData.get('tipoUso') || '').trim();
+    const tensao = String(formData.get('tensao') || 'Não informado');
+    const resumo = String(formData.get('resumoCalculo') || 'Não informado').trim() || 'Não informado';
+    const observacoes = String(formData.get('observacoes') || 'Sem observações').trim() || 'Sem observações';
+
+    const valorMensal = calculo.mensalidade === null ? 'Sob consulta' : formatarMoeda(calculo.mensalidade);
+    const valorPeriodo = calculo.totalPeriodo === null ? 'A confirmar' : formatarMoeda(calculo.totalPeriodo);
+
+    const mensagem = [
+        `SOLICITAÇÃO DE ORÇAMENTO ${codigo}`,
+        '',
+        `Cliente: ${nome}`,
+        `WhatsApp: ${telefone}`,
+        `E-mail: ${email || 'Não informado'}`,
+        `Cidade: ${cidade}`,
+        `Uso: ${tipoUso || 'Não informado'}`,
+        `Modalidade: ${quoteMode?.selectedOptions[0]?.textContent || calculo.modalidade}`,
+        '',
+        `Equipamento: ${calculo.equipamento.categoria} ${formatarNumero(calculo.equipamento.capacidade)} BTU/h`,
+        `Quantidade: ${calculo.quantidade}`,
+        `Prazo: ${calculo.modalidade === 'evento' ? 'Sob avaliação' : `${calculo.meses} mês(es)`}`,
+        `Tensão: ${tensao}`,
+        `Referência mensal: ${valorMensal}`,
+        `Referência do período: ${valorPeriodo}`,
+        '',
+        'Resumo técnico:',
+        resumo,
+        '',
+        'Observações:',
+        observacoes,
+        '',
+        `Benchmark de mercado: ${FONTES.dataReferencia}.`,
+        'Sujeito à confirmação técnica, comercial, de estoque, instalação e logística.'
+    ].join('\n');
+
+    if (EMPRESA.whatsapp) {
+        const url = `https://wa.me/${EMPRESA.whatsapp}?text=${encodeURIComponent(mensagem)}`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+        if (formFeedback) formFeedback.textContent = `${codigo} preparado. O WhatsApp foi aberto.`;
         return;
     }
 
-    const data = new FormData(quoteForm);
-    const mensagem = [
-        'SOLICITAÇÃO DE ORÇAMENTO - LOCAÇÃO DE AR-CONDICIONADO', '',
-        `Nome: ${data.get('nome') || ''}`,
-        `Telefone: ${data.get('telefone') || ''}`,
-        `Cidade: ${data.get('cidade') || ''}`,
-        `Uso: ${data.get('tipoUso') || 'Não informado'}`,
-        `Equipamento: ${orcamento.equipamento.titulo}`,
-        `Quantidade: ${orcamento.quantidade}`,
-        `Período: ${orcamento.dias} dias`, '',
-        `Locação: ${formatarMoeda(orcamento.subtotalLocacao)}`,
-        `Desconto: - ${formatarMoeda(orcamento.descontoValor)}`,
-        `Instalação: ${formatarMoeda(orcamento.instalacao)}`,
-        `Retirada: ${formatarMoeda(orcamento.retirada)}`,
-        `Deslocamento: ${orcamento.deslocamentoKey === 'avaliar' ? 'A avaliar' : formatarMoeda(orcamento.deslocamento)}`,
-        `TOTAL ESTIMADO: ${formatarMoeda(orcamento.total)}`, '',
-        'Resumo técnico:', data.get('resumoCalculo') || 'Não informado', '',
-        `Observações: ${data.get('observacoes') || 'Nenhuma'}`, '',
-        'Observação: valor sujeito à confirmação comercial e técnica.'
-    ].join('\n');
-
-    if (CONFIGURACAO_COMERCIAL.whatsappNumero) {
-        const url = `https://wa.me/${CONFIGURACAO_COMERCIAL.whatsappNumero}?text=${encodeURIComponent(mensagem)}`;
-        window.open(url, '_blank', 'noopener');
-        if (formFeedback) formFeedback.textContent = 'Solicitação preparada. O WhatsApp foi aberto em uma nova janela.';
-        return;
+    if (navigator.share) {
+        try {
+            await navigator.share({ title: `Orçamento ${codigo}`, text: mensagem });
+            if (formFeedback) formFeedback.textContent = `${codigo} preparado para compartilhamento.`;
+            return;
+        } catch (error) {
+            /* Se o usuário cancelar o compartilhamento, tentamos copiar abaixo. */
+        }
     }
 
     try {
         await navigator.clipboard.writeText(mensagem);
-        if (formFeedback) formFeedback.textContent = 'Solicitação gerada e copiada. Cadastre o número da empresa no JavaScript para abrir o WhatsApp automaticamente.';
-    } catch (erro) {
-        if (formFeedback) formFeedback.textContent = 'Solicitação gerada. Cadastre o WhatsApp da empresa no JavaScript para ativar o envio automático.';
+        if (formFeedback) formFeedback.textContent = `${codigo} criado e copiado. O contato oficial da empresa ainda precisa ser configurado.`;
+    } catch (error) {
+        if (formFeedback) formFeedback.textContent = `${codigo} criado. Configure o WhatsApp da empresa em js/data.js para habilitar o envio direto.`;
     }
 });
 
 /* =========================================================
-   13. MÁSCARA DE TELEFONE
+   16. MÁSCARA DE TELEFONE BRASILEIRO
+   Mantém apenas 11 dígitos e melhora a leitura durante a digitação.
    ========================================================= */
 phoneInput?.addEventListener('input', (event) => {
-    const input = event.currentTarget;
-    const numeros = input.value.replace(/\D/g, '').slice(0, 11);
+    const numeros = event.currentTarget.value.replace(/\D/g, '').slice(0, 11);
     let formatado = numeros;
-    if (numeros.length > 2) formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
-    if (numeros.length > 7) {
-        const corte = numeros.length === 11 ? 7 : 6;
+
+    if (numeros.length > 2) {
+        formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+    }
+
+    if (numeros.length > 6) {
+        const celular = numeros.length > 10;
+        const corte = celular ? 7 : 6;
         formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2, corte)}-${numeros.slice(corte)}`;
     }
-    input.value = formatado;
+
+    event.currentTarget.value = formatado;
 });
 
 /* =========================================================
-   14. MENU RESPONSIVO
+   17. MENU RESPONSIVO
    ========================================================= */
-function alternarMenu() {
-    if (!menuToggle || !navigation) return;
-    const aberto = navigation.classList.toggle('active');
-    menuToggle.classList.toggle('active', aberto);
-    menuToggle.setAttribute('aria-expanded', String(aberto));
-    menuToggle.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
-    document.body.classList.toggle('menu-open', aberto);
-}
-
 function fecharMenu() {
     if (!menuToggle || !navigation) return;
     navigation.classList.remove('active');
@@ -494,11 +619,19 @@ function fecharMenu() {
     document.body.classList.remove('menu-open');
 }
 
-menuToggle?.addEventListener('click', alternarMenu);
+menuToggle?.addEventListener('click', () => {
+    if (!navigation) return;
+    const aberto = navigation.classList.toggle('active');
+    menuToggle.classList.toggle('active', aberto);
+    menuToggle.setAttribute('aria-expanded', String(aberto));
+    menuToggle.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+    document.body.classList.toggle('menu-open', aberto);
+});
+
 navigation?.querySelectorAll('a').forEach((link) => link.addEventListener('click', fecharMenu));
 
 /* =========================================================
-   15. CABEÇALHO, RODAPÉ E INICIALIZAÇÃO
+   18. CABEÇALHO E ANO
    ========================================================= */
 function atualizarCabecalho() {
     header?.classList.toggle('scrolled', window.scrollY > 16);
@@ -506,7 +639,18 @@ function atualizarCabecalho() {
 
 window.addEventListener('scroll', atualizarCabecalho, { passive: true });
 atualizarCabecalho();
-if (currentYear) currentYear.textContent = String(new Date().getFullYear());
-preencherOpcoesDeEquipamento();
+
+document.querySelectorAll('[data-current-year]').forEach((elemento) => {
+    elemento.textContent = String(new Date().getFullYear());
+});
+
+/* =========================================================
+   19. INICIALIZAÇÃO
+   A ordem importa: primeiro preenchemos os dados e selects; depois
+   calculamos o resumo inicial do orçamento.
+   ========================================================= */
+aplicarDadosDaEmpresa();
 renderizarCatalogo();
-atualizarOrcamento();
+renderizarBenchmarks();
+preencherSelectEquipamentos();
+atualizarResumoOrcamento();
